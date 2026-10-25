@@ -90,6 +90,47 @@ body footer .wrap { display: grid; gap: 26px; justify-content: normal; }
   .totop { bottom: calc(76px + env(safe-area-inset-bottom, 0px)); }
   body footer { padding-bottom: 90px; }
 }
+.live-meta { color: var(--muted); font-size: 14px; }
+.live-meta b { color: var(--green); }
+.lgrid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; }
+@media (max-width: 980px) { .lgrid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 640px) { .lgrid { grid-template-columns: 1fr; } }
+.lcard { background: var(--panel); border: 1px solid var(--line); border-radius: 14px; padding: 18px; display: grid; gap: 10px; align-content: start; min-width: 0; }
+.lcard.wide { grid-column: span 2; }
+@media (max-width: 640px) { .lcard.wide { grid-column: auto; } }
+.lcard h3 { font-size: 16px; display: flex; justify-content: space-between; gap: 10px; align-items: baseline; }
+.lcard h3 small { font: 400 12px var(--f-body); color: var(--muted); }
+.ltab { width: 100%; border-collapse: collapse; font-size: 14px; }
+.ltab td, .ltab th { padding: 6px 4px; border-bottom: 1px solid var(--line); text-align: left; white-space: nowrap; }
+.ltab th { color: var(--muted); font-weight: 500; font-size: 12px; }
+.ltab td.r, .ltab th.r { text-align: right; }
+.ltab .up { color: var(--green); } .ltab .dn { color: var(--red); } .ltab .fl { color: var(--muted); }
+.ltab tr:last-child td { border-bottom: 0; }
+.spark { display: block; }
+.lnews { display: grid; gap: 10px; margin: 0; padding: 0; list-style: none; }
+.lnews li { font-size: 14px; color: #c5d4e8; }
+.lnews .w { display: block; color: var(--muted); font: 12px var(--f-mono); }
+.lrank { margin: 0; padding: 0; list-style: none; display: grid; gap: 6px; font-size: 14px; counter-reset: r; }
+.lrank li { display: flex; justify-content: space-between; gap: 10px; color: #c5d4e8; counter-increment: r; }
+.lrank li::before { content: counter(r); color: var(--cyan); font-family: var(--f-display); font-weight: 700; width: 18px; flex-shrink: 0; }
+.lrank li span:first-of-type { flex: 1; overflow: hidden; text-overflow: ellipsis; }
+.lrank li b { color: var(--white); font-weight: 600; }
+.lstats { display: flex; flex-wrap: wrap; gap: 10px 26px; margin: 26px 0 0; }
+.lstats div { font-size: 14px; color: var(--muted); }
+.lstats b { display: block; font-family: var(--f-display); font-size: 26px; color: var(--white); }
+.lempty { background: var(--panel); border: 1px dashed var(--line); border-radius: 14px; padding: 22px; color: var(--muted); }
+.fame { margin: 0; padding: 0; list-style: none; display: grid; gap: 10px; }
+.fame li { font-size: 14px; color: #c5d4e8; border-left: 2px solid var(--gold); padding-left: 10px; }
+.fame li b { display: block; color: var(--gold); font-family: var(--f-display); font-weight: 600; font-size: 13px; text-transform: uppercase; letter-spacing: .06em; }
+.community { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px; }
+.discord { background: linear-gradient(135deg, #3b44c4, #5865f2); border-radius: 16px; padding: 24px; color: #fff; display: grid; gap: 12px; align-content: start; }
+.discord h3 { font-size: 24px; color: #fff; }
+.discord a.btn { background: #fff; color: #2b33a8; justify-self: start; }
+.votes { display: grid; gap: 8px; }
+.votes a { display: flex; justify-content: space-between; align-items: center; background: var(--deep); border: 1px solid var(--line); border-radius: 10px; padding: 11px 14px; color: var(--ink); text-decoration: none; font-weight: 500; }
+.votes a:hover { border-color: var(--cyan); }
+.trailer { position: relative; aspect-ratio: 16 / 9; border-radius: 14px; overflow: hidden; border: 1px solid var(--line); background: #000; }
+.trailer iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; }
 </style></head><body>
 <title>YoMikey SMP</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -279,8 +320,8 @@ footer .wrap { display: flex; flex-wrap: wrap; justify-content: space-between; g
   <div class="wrap">
     <a class="brand" href="#top"><img src="img/logo.png" alt="">YoMikey SMP</a>
     <nav class="nav" aria-label="Sections">
-      <a href="#join">Join</a><a href="#city">Forge City</a><a href="#screens">Screens</a><a href="#economy">Economy</a><a href="#towns">Towns</a>
-      <a href="#nations">Nations</a>
+      <a href="#join">Join</a><a href="#live">Live</a><a href="world.html">World map</a><a href="guide/">Guide</a><a href="#city">Forge City</a><a href="#screens">Screens</a><a href="#economy">Economy</a>
+      
       <a href="#staff">Staff</a><a href="#commands">Commands</a><a href="#rules">Rules</a>
     </nav>
     <button class="ipchip" type="button" data-copy="yomikeysmp.modrinth.gg" aria-label="Copy server address"><span class="dot"></span><span class="t">yomikeysmp.modrinth.gg</span><span aria-hidden="true">⧉</span></button>
@@ -347,6 +388,41 @@ footer .wrap { display: flex; flex-wrap: wrap; justify-content: space-between; g
       <div class="job"><div class="ic"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 17l6-6 4 4 8-8M15 7h6v6"/></svg></div><h3>Trader</h3><p>Watch the Exchange board, buy what's cheap, sell what's short, and flip auctions.</p></div>
       <div class="job"><div class="ic"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 21V8l8-5 8 5v13M9 21v-6h6v6"/></svg></div><h3>Founder</h3><p>Start a company, sell shares, hire players and pay dividends. <code>/co new</code></p></div>
       <div class="job"><div class="ic"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 21h18M5 21V10M19 21V10M9 21V10M15 21V10M2 10l10-6 10 6z"/></svg></div><h3>Leader</h3><p>Run a town, lead a nation, sit as a judge or negotiate treaties as a diplomat.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= LIVE ================= -->
+<section id="live">
+  <div class="wrap">
+    <div class="head">
+      <div class="eyebrow">Live</div>
+      <h2>Right now on the server</h2>
+      <p class="live-meta" id="livemeta">Loading live data…</p>
+    </div>
+    <div id="liveempty" class="lempty" hidden>Live prices, news, towns and nations appear here once the server starts publishing its data. Check back soon, or jump in and make some history.</div>
+    <div id="livebody" hidden>
+      <div class="lgrid">
+        <div class="lcard wide"><h3>The Exchange <small id="exsum"></small></h3><div class="tbl-wrap"><table class="ltab" id="extab"></table></div></div>
+        <div class="lcard"><h3>News wire</h3><ul class="lnews" id="lnews"></ul></div>
+        <div class="lcard"><h3>Richest players</h3><ol class="lrank" id="lrich"></ol></div>
+        <div class="lcard"><h3>Biggest towns</h3><ol class="lrank" id="ltowns"></ol></div>
+        <div class="lcard"><h3>Hall of Fame</h3><ul class="fame" id="lfame"></ul></div>
+      </div>
+      <div class="lstats" id="lstats"></div>
+      <div class="cta" style="margin-top:26px"><a class="btn btn-primary" href="world.html">Explore the world map, towns and nations →</a></div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= COMMUNITY (shown once links are set on the server) ================= -->
+<section id="community" hidden>
+  <div class="wrap">
+    <div class="head"><div class="eyebrow">Community</div><h2>Join the community</h2></div>
+    <div id="trailerbox" class="trailer" hidden style="margin-bottom:22px"></div>
+    <div class="community">
+      <div class="discord" id="discordbox" hidden><h3>Join our Discord</h3><p>Chat with players, plan your nation, trade, and hear about events first.</p><a class="btn" id="discordlink" href="#" target="_blank" rel="noopener">Open Discord</a></div>
+      <div class="lcard" id="votebox" hidden><h3>Vote for us every day</h3><p style="color:#b6c6dc;font-size:14px">Each vote pushes YoMikey SMP up the server lists so new players can find us. In game, <code>/vote</code> shows the same links.</p><div class="votes" id="votes"></div></div>
     </div>
   </div>
 </section>
@@ -833,6 +909,7 @@ footer .wrap { display: flex; flex-wrap: wrap; justify-content: space-between; g
   <button class="x" type="button" aria-label="Close">✕</button><button class="p" type="button" aria-label="Previous">‹</button><button class="n" type="button" aria-label="Next">›</button>
 </div>
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
+<script src="live.js"></script>
 
 <script>
 (function () {
@@ -932,6 +1009,35 @@ footer .wrap { display: flex; flex-wrap: wrap; justify-content: space-between; g
     }
     window.addEventListener('scroll', function () { totop.classList.toggle('on', window.scrollY > 900); }, { passive: true });
   })();
+
+  // ---------- live data ----------
+  if (window.YMS) YMS.onData(function (d) {
+    var meta = document.getElementById('livemeta');
+    if (!d) { meta.textContent = 'Live data isn\'t available yet.'; document.getElementById('liveempty').hidden = false; return; }
+    var E = YMS.esc;
+    meta.innerHTML = '<b>●</b> Updated ' + YMS.ago(d.updated) + ' · ' + (d.server ? d.server.online + ' online now' : '');
+    document.getElementById('livebody').hidden = false;
+    var items = (d.exchange && d.exchange.items || []).slice().sort(function (a, b) { return (b.vol - a.vol) || (Math.abs(b.chg) - Math.abs(a.chg)); }).slice(0, 8);
+    document.getElementById('exsum').textContent = d.exchange ? YMS.money(d.exchange.fc24) + ' FC traded today' : '';
+    document.getElementById('extab').innerHTML = '<tr><th>Item</th><th class="r">Buy</th><th class="r">Sell</th><th class="r">24h</th><th class="r">Stock</th><th>24h chart</th></tr>' + items.map(function (x) {
+      var c = x.chg > 0.05 ? 'up' : x.chg < -0.05 ? 'dn' : 'fl';
+      return '<tr><td>' + E(x.name) + '</td><td class="r">' + YMS.money(x.buy) + '</td><td class="r">' + YMS.money(x.sell) + '</td><td class="r ' + c + '">' + (x.chg > 0 ? '+' : '') + x.chg + '%</td><td class="r">' + (x.stock > 0 ? x.stock : '<span class="dn">sold out</span>') + '</td><td>' + YMS.spark(x.spark, 90, 22, x.chg >= 0) + '</td></tr>';
+    }).join('');
+    document.getElementById('lnews').innerHTML = (d.news || []).slice(0, 6).map(function (n) { return '<li><span class="w">' + E(n.when) + '</span>' + E(n.text) + '</li>'; }).join('') || '<li>No news yet.</li>';
+    document.getElementById('lrich').innerHTML = (d.rich || []).slice(0, 5).map(function (r) { return '<li><span>' + E(r.name) + '</span><b>' + YMS.money(r.bal) + ' FC</b></li>'; }).join('');
+    document.getElementById('ltowns').innerHTML = (d.towns || []).slice().sort(function (a, b) { return b.residents.length - a.residents.length; }).slice(0, 5).map(function (t) {
+      return '<li><span><a href="world.html#town=' + encodeURIComponent(t.name) + '" style="color:inherit">' + E(t.name) + '</a></span><b>' + t.residents.length + ' · ' + t.claims.length + ' chunks</b></li>'; }).join('') || '<li>No towns yet. Be the first!</li>';
+    document.getElementById('lfame').innerHTML = (d.fame || []).map(function (f) { return '<li><b>' + E(f.title) + '</b>' + E(f.who) + ' <span style="color:var(--muted)">· ' + YMS.date(f.when) + '</span></li>'; }).join('') || '<li>History hasn\'t been made yet. It could be you.</li>';
+    var s = d.stats || {};
+    document.getElementById('lstats').innerHTML = [['Towns', s.towns], ['Nations', s.nations], ['Claimed chunks', s.claims], ['Companies', s.companies], ['Players so far', d.server && d.server.players_total], ['Forge Coins in play', (s.coins || 0).toLocaleString()]]
+      .map(function (x) { return '<div><b>' + (x[1] == null ? 0 : x[1]) + '</b>' + x[0] + '</div>'; }).join('');
+    // community links
+    var L = d.links || {}, any = false;
+    if (L.discord) { any = true; document.getElementById('discordbox').hidden = false; document.getElementById('discordlink').href = L.discord; }
+    if (L.vote && L.vote.length) { any = true; document.getElementById('votebox').hidden = false; document.getElementById('votes').innerHTML = L.vote.map(function (v) { return '<a href="' + E(v.url) + '" target="_blank" rel="noopener">' + E(v.name) + '<span aria-hidden="true">↗</span></a>'; }).join(''); }
+    if (L.trailer && /^[\w-]{6,20}$/.test(L.trailer)) { any = true; var tb = document.getElementById('trailerbox'); tb.hidden = false; tb.innerHTML = '<iframe src="https://www.youtube-nocookie.com/embed/' + L.trailer + '" title="YoMikey SMP trailer" allow="accelerometer; encrypted-media; picture-in-picture" allowfullscreen loading="lazy"></iframe>'; }
+    if (any) document.getElementById('community').hidden = false;
+  });
 
   // ---------- live server status (public status API; fails quietly) ----------
   (function () {
