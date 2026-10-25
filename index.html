@@ -52,6 +52,24 @@
 .log b { color: var(--white); font-family: var(--f-display); font-size: 17px; display: block; }
 .log p { color: #b6c6dc; font-size: 15px; margin-top: 4px; }
 .log .when { color: var(--muted); font-size: 13px; font-family: var(--f-mono); }
+.more { display: flex; justify-content: center; margin-top: 14px; }
+.more button { background: var(--deep); border: 1px solid var(--line); color: var(--ink); font: 600 14px var(--f-display); padding: 10px 18px; border-radius: 10px; cursor: pointer; }
+.more button:hover { border-color: var(--cyan); }
+.thumbs .sep { grid-column: 1 / -1; font-family: var(--f-display); font-size: 12px; text-transform: uppercase; letter-spacing: .14em; color: var(--cyan); margin: 6px 0 -2px; }
+.nav a.on { color: var(--white); background: var(--panel); }
+.totop { position: fixed; right: max(16px, env(safe-area-inset-right, 0px)); bottom: calc(18px + env(safe-area-inset-bottom, 0px)); width: 44px; height: 44px; border-radius: 12px; background: var(--panel); border: 1px solid var(--line); color: var(--cyan); display: grid; place-items: center; text-decoration: none; font-size: 20px; opacity: 0; pointer-events: none; transition: .2s; z-index: 25; }
+.totop.on { opacity: 1; pointer-events: auto; }
+body footer { border-top: 1px solid var(--line); }
+body footer .wrap { display: grid; gap: 26px; justify-content: normal; }
+.foot { display: grid; grid-template-columns: 1.4fr 1fr 1fr; gap: 24px; }
+@media (max-width: 760px) { .foot { grid-template-columns: 1fr 1fr; } .foot > :first-child { grid-column: 1 / -1; } }
+.foot b { display: block; color: var(--white); font-family: var(--f-display); font-size: 14px; margin-bottom: 8px; }
+.foot a { display: block; color: var(--muted); text-decoration: none; padding: 3px 0; font-size: 14px; }
+.foot a:hover { color: var(--white); }
+.foot .brandline { display: flex; align-items: center; gap: 10px; color: var(--white); font-family: var(--f-display); font-weight: 700; font-size: 18px; }
+.foot .brandline img { width: 28px; height: 28px; }
+.foot p { margin-top: 8px; font-size: 14px; max-width: 34ch; }
+.fine { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 10px; font-size: 13px; border-top: 1px solid var(--line); padding-top: 18px; }
 </style></head><body>
 <title>YoMikey SMP</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -222,12 +240,12 @@ details p { color: #c0cfe3; margin-top: 10px; max-width: 70ch; }
 .tabs button { background: var(--deep); border: 1px solid var(--line); color: var(--muted); font: 500 13px var(--f-body); padding: 7px 12px; border-radius: 999px; cursor: pointer; }
 .tabs button[aria-pressed="true"] { background: var(--cyan); border-color: var(--cyan); color: #04121c; }
 .cmdtable { border: 1px solid var(--line); border-radius: 12px; overflow: hidden; }
-.cmdrow { display: grid; grid-template-columns: minmax(0, 2fr) minmax(0, 3fr) auto; gap: 14px; align-items: center; padding: 11px 16px; border-top: 1px solid var(--line); }
+.cmdrow { display: grid; grid-template-columns: minmax(0, 2fr) minmax(0, 3fr) 96px; gap: 14px; align-items: center; padding: 11px 16px; border-top: 1px solid var(--line); }
 .cmdrow:first-child { border-top: 0; }
 .cmdrow:nth-child(even) { background: #0c1830; }
 .cmdrow code { color: var(--cyan); word-break: break-word; }
 .cmdrow .d { color: #c0cfe3; font-size: 14px; }
-.cmdrow .g { font-size: 11px; text-transform: uppercase; letter-spacing: .1em; color: var(--muted); font-family: var(--f-display); }
+.cmdrow .g { text-align: right; font-size: 11px; text-transform: uppercase; letter-spacing: .1em; color: var(--muted); font-family: var(--f-display); }
 @media (max-width: 680px) { .cmdrow { grid-template-columns: 1fr; gap: 4px; } }
 .empty { padding: 20px; color: var(--muted); }
 
@@ -733,6 +751,7 @@ footer .wrap { display: flex; flex-wrap: wrap; justify-content: space-between; g
       <div class="tabs" id="tabs" role="group" aria-label="Filter by system"></div>
     </div>
     <div class="cmdtable" id="cmds"></div>
+    <div class="more"><button type="button" id="cmdmore" hidden></button></div>
   </div>
 </section>
 
@@ -771,10 +790,19 @@ footer .wrap { display: flex; flex-wrap: wrap; justify-content: space-between; g
 
 <footer>
   <div class="wrap">
-    <span>YoMikey SMP · <span class="mono">yomikeysmp.modrinth.gg</span> · Tekkit 2 v1.2.6</span>
-    <span>Not affiliated with Mojang, Microsoft or Technic.</span>
+    <div class="foot">
+      <div>
+        <div class="brandline"><img src="img/logo.png" alt="">YoMikey SMP</div>
+        <p>A Tekkit 2 server of towns, nations, trade and railways, starting in Forge City.</p>
+        <button class="btn btn-primary" type="button" data-copy="yomikeysmp.modrinth.gg" style="margin-top:14px;font-size:14px;padding:10px 14px">Copy IP <span class="ip" style="font-size:13px">yomikeysmp.modrinth.gg</span></button>
+      </div>
+      <div><b>Play</b><a href="#join">How to join</a><a href="#play">Ways to play</a><a href="#city">Forge City</a><a href="#economy">Economy</a><a href="#commands">Commands</a></div>
+      <div><b>Community</b><a href="#rules">Rules</a><a href="#fairplay">Fair play</a><a href="#staff">Join the staff</a><a href="#updates">What's new</a><a href="#top">Back to top</a></div>
+    </div>
+    <div class="fine"><span>Tekkit 2 v1.2.6 · Minecraft 1.12.2</span><span>Not affiliated with Mojang, Microsoft or Technic.</span></div>
   </div>
 </footer>
+<a class="totop" id="totop" href="#top" aria-label="Back to top">↑</a>
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
 <script>
@@ -826,9 +854,30 @@ footer .wrap { display: flex; flex-wrap: wrap; justify-content: space-between; g
     var b = document.createElement('button'); b.type = 'button'; b.setAttribute('aria-label', v[1]);
     b.innerHTML = '<img src="img/' + v[0] + '" alt="" loading="lazy">';
     b.addEventListener('click', function () { show(i); });
+    if (i === 0 || v[1].indexOf('In game') === 0 && views[i - 1][1].indexOf('In game') !== 0) {
+      var sep = document.createElement('div'); sep.className = 'sep'; sep.textContent = i === 0 ? 'Renders' : 'In game'; th.appendChild(sep);
+    }
     th.appendChild(b);
   });
   show(0);
+
+  // ---------- nav highlight + back to top ----------
+  (function () {
+    var links = {}, totop = document.getElementById('totop');
+    document.querySelectorAll('.nav a').forEach(function (a) { links[a.getAttribute('href').slice(1)] = a; });
+    if ('IntersectionObserver' in window) {
+      var io = new IntersectionObserver(function (es) {
+        es.forEach(function (e) {
+          if (!e.isIntersecting || !links[e.target.id]) return;
+          Object.keys(links).forEach(function (k) { links[k].classList.toggle('on', k === e.target.id); });
+          var a = links[e.target.id], nav = a.parentNode;
+          if (nav.scrollWidth > nav.clientWidth) nav.scrollTo({ left: a.offsetLeft - 40, behavior: 'smooth' });
+        });
+      }, { rootMargin: '-45% 0px -50% 0px' });
+      document.querySelectorAll('section[id]').forEach(function (s) { io.observe(s); });
+    }
+    window.addEventListener('scroll', function () { totop.classList.toggle('on', window.scrollY > 900); }, { passive: true });
+  })();
 
   // ---------- live server status (public status API; fails quietly) ----------
   (function () {
@@ -912,6 +961,9 @@ footer .wrap { display: flex; flex-wrap: wrap; justify-content: space-between; g
     ['Help', '/rules', 'The server rules'], ['Help', '/guide [topic]', 'Guides: start, money, shops, towns, rail, jobs...'], ['Help', '/handbook', 'A fresh copy of the handbook'], ['Help', '/report <player> <what happened>', 'Tell staff about a problem'], ['Help', '/apply', 'Apply to join the staff team'], ['Help', '/guide tips off', 'Turn off chat tips']
   ];
   var groups = ['All'].concat(C.map(function (c) { return c[0]; }).filter(function (v, i, a) { return a.indexOf(v) === i; }));
+  var showAll = false;
+  var KEY = ['/bal [player]', '/pay <player> <amount> [note]', '/exchange', '/sell [amount|all]', '/store [item or player]', '/ah [page]', '/spawn', '/lot claim · unclaim · info · list',
+             '/t new <name>', '/t claim · /t unclaim', '/freight list [station]', '/co new <name>', '/n new <name>', '/court file <player> <charge>', '/guide [topic]', '/report <player> <what happened>', '/apply'];
   var active = 'All', q = document.getElementById('q'), tabs = document.getElementById('tabs'), out = document.getElementById('cmds');
   try { var saved = localStorage.getItem('yms-tab'); if (saved && groups.indexOf(saved) >= 0) active = saved; } catch (e) {}
   groups.forEach(function (gname) {
@@ -924,11 +976,16 @@ footer .wrap { display: flex; flex-wrap: wrap; justify-content: space-between; g
     tabs.querySelectorAll('button').forEach(function (b) { b.setAttribute('aria-pressed', b.textContent === active ? 'true' : 'false'); });
     var term = q.value.trim().toLowerCase();
     var rows = C.filter(function (c) { return (active === 'All' || c[0] === active) && (!term || (c[1] + ' ' + c[2] + ' ' + c[0]).toLowerCase().indexOf(term) >= 0); });
+    var full = rows.length, collapsed = !showAll && active === 'All' && !term && full > 14;
+    if (collapsed) rows = rows.filter(function (c) { return KEY.indexOf(c[1]) >= 0; });
+    var mb = document.getElementById('cmdmore');
+    if (mb) { mb.hidden = !collapsed && !(showAll && active === 'All' && !term); mb.textContent = collapsed ? 'Show all ' + full + ' commands' : 'Show fewer'; }
     out.innerHTML = rows.length ? rows.map(function (c) {
       var first = c[1].split(' · ')[0].replace(/\s*[<\[].*$/, '');
       return '<div class="cmdrow"><code class="chip" style="background:none;border:0;padding:0" data-copy="' + esc(first) + '" title="Copy ' + esc(first) + '">' + esc(c[1]) + '</code><span class="d">' + esc(c[2]) + '</span><span class="g">' + c[0] + '</span></div>';
     }).join('') : '<div class="empty">No commands match "' + esc(term) + '".</div>';
   }
+  document.getElementById('cmdmore').addEventListener('click', function () { showAll = !showAll; render(); if (!showAll) document.getElementById('commands').scrollIntoView(); });
   q.addEventListener('input', render);
   render();
 })();
