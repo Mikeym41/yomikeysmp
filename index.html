@@ -70,6 +70,26 @@ body footer .wrap { display: grid; gap: 26px; justify-content: normal; }
 .foot .brandline img { width: 28px; height: 28px; }
 .foot p { margin-top: 8px; font-size: 14px; max-width: 34ch; }
 .fine { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 10px; font-size: 13px; border-top: 1px solid var(--line); padding-top: 18px; }
+.zoomable { cursor: zoom-in; }
+.lb { position: fixed; inset: 0; z-index: 50; background: rgba(3, 7, 15, .92); display: none; align-items: center; justify-content: center; padding: 24px 16px calc(24px + env(safe-area-inset-bottom, 0px)); }
+.lb.on { display: flex; }
+.lb figure { margin: 0; max-width: min(1280px, 100%); display: grid; gap: 10px; }
+.lb img { width: min(1100px, 100%); height: auto; max-height: calc(100vh - 140px); border-radius: 10px; border: 1px solid var(--line); object-fit: contain; margin: 0 auto; }
+.lb figcaption { color: #c0cfe3; font-size: 15px; text-align: center; }
+.lb figcaption b { color: var(--white); font-family: var(--f-display); }
+.lb button { position: absolute; background: var(--panel); border: 1px solid var(--line); color: var(--white); width: 46px; height: 46px; border-radius: 12px; font-size: 22px; cursor: pointer; display: grid; place-items: center; }
+.lb button:hover { border-color: var(--cyan); }
+.lb .x { top: 16px; right: 16px; } .lb .p { left: 16px; top: 50%; } .lb .n { right: 16px; top: 50%; }
+@media (max-width: 640px) { .lb .p, .lb .n { top: auto; bottom: 18px; } .lb .p { left: calc(50% - 56px); } .lb .n { right: calc(50% - 56px); } }
+.joinbar { display: none; }
+@media (max-width: 760px) {
+  .joinbar { display: flex; position: fixed; left: 0; right: 0; bottom: 0; z-index: 24; gap: 10px; align-items: center; justify-content: space-between; padding: 10px 16px calc(10px + env(safe-area-inset-bottom, 0px)); background: color-mix(in srgb, var(--night) 92%, transparent); backdrop-filter: blur(10px); border-top: 1px solid var(--line); transform: translateY(110%); transition: transform .25s; }
+  .joinbar.on { transform: none; }
+  .joinbar span { font-family: var(--f-mono); font-size: 13px; color: var(--ink); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .joinbar .btn { padding: 9px 14px; font-size: 14px; flex-shrink: 0; }
+  .totop { bottom: calc(76px + env(safe-area-inset-bottom, 0px)); }
+  body footer { padding-bottom: 90px; }
+}
 </style></head><body>
 <title>YoMikey SMP</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -132,8 +152,8 @@ code, .mono { font-family: var(--f-mono); font-size: 0.88em; }
 
 /* ---------- hero ---------- */
 .hero { position: relative; overflow: hidden; border-bottom: 1px solid var(--line); background: radial-gradient(ellipse at 70% 40%, #12305a 0%, var(--night) 62%); }
-.hero .wrap { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); gap: 28px; align-items: center; padding-block: 56px 40px; }
-.hero h1 { font-size: clamp(42px, 6.4vw, 78px); font-weight: 700; letter-spacing: -0.02em; color: var(--white); }
+.hero .wrap { display: grid; grid-template-columns: minmax(0, 6fr) minmax(0, 6fr); gap: 28px; align-items: center; padding-block: 56px 40px; }
+.hero h1 { font-size: clamp(40px, 5vw, 64px); font-weight: 700; letter-spacing: -0.02em; color: var(--white); }
 .hero h1 span { color: var(--cyan); }
 .hero .lede { margin-top: 18px; color: #b8c9df; }
 .cta { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 28px; }
@@ -261,7 +281,7 @@ footer .wrap { display: flex; flex-wrap: wrap; justify-content: space-between; g
     <nav class="nav" aria-label="Sections">
       <a href="#join">Join</a><a href="#city">Forge City</a><a href="#screens">Screens</a><a href="#economy">Economy</a><a href="#towns">Towns</a>
       <a href="#nations">Nations</a>
-      <a href="#fairplay">Fair play</a><a href="#staff">Staff</a><a href="#commands">Commands</a><a href="#rules">Rules</a>
+      <a href="#staff">Staff</a><a href="#commands">Commands</a><a href="#rules">Rules</a>
     </nav>
     <button class="ipchip" type="button" data-copy="yomikeysmp.modrinth.gg" aria-label="Copy server address"><span class="dot"></span><span class="t">yomikeysmp.modrinth.gg</span><span aria-hidden="true">⧉</span></button>
   </div>
@@ -807,6 +827,11 @@ footer .wrap { display: flex; flex-wrap: wrap; justify-content: space-between; g
   </div>
 </footer>
 <a class="totop" id="totop" href="#top" aria-label="Back to top">↑</a>
+<div class="joinbar" id="joinbar"><span>yomikeysmp.modrinth.gg</span><button class="btn btn-primary" type="button" data-copy="yomikeysmp.modrinth.gg">Copy IP</button></div>
+<div class="lb" id="lb" role="dialog" aria-modal="true" aria-label="Screenshot viewer">
+  <figure><img id="lbimg" alt=""><figcaption id="lbcap"></figcaption></figure>
+  <button class="x" type="button" aria-label="Close">✕</button><button class="p" type="button" aria-label="Previous">‹</button><button class="n" type="button" aria-label="Next">›</button>
+</div>
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
 <script>
@@ -855,6 +880,40 @@ footer .wrap { display: flex; flex-wrap: wrap; justify-content: space-between; g
     th.appendChild(b);
   });
   show(0);
+
+  // ---------- lightbox ----------
+  (function () {
+    var lb = document.getElementById('lb'), im = document.getElementById('lbimg'), cap = document.getElementById('lbcap'), list = [], idx = 0, opener = null;
+    function paint() { im.src = 'img/' + list[idx][0]; im.alt = list[idx][1]; cap.innerHTML = '<b>' + list[idx][1] + '.</b> ' + list[idx][2]; }
+    function open(l, i, from) { list = l; idx = i; opener = from; paint(); lb.classList.add('on'); lb.querySelector('.x').focus(); }
+    function close() { lb.classList.remove('on'); if (opener) opener.focus(); }
+    function step(d) { idx = (idx + d + list.length) % list.length; paint(); }
+    lb.querySelector('.x').addEventListener('click', close);
+    lb.querySelector('.p').addEventListener('click', function () { step(-1); });
+    lb.querySelector('.n').addEventListener('click', function () { step(1); });
+    lb.addEventListener('click', function (e) { if (e.target === lb) close(); });
+    document.addEventListener('keydown', function (e) {
+      if (!lb.classList.contains('on')) return;
+      if (e.key === 'Escape') close(); else if (e.key === 'ArrowLeft') step(-1); else if (e.key === 'ArrowRight') step(1);
+    });
+    var sx = null;
+    lb.addEventListener('touchstart', function (e) { sx = e.touches[0].clientX; }, { passive: true });
+    lb.addEventListener('touchend', function (e) { if (sx === null) return; var dx = e.changedTouches[0].clientX - sx; if (Math.abs(dx) > 40) step(dx < 0 ? 1 : -1); sx = null; });
+    [['gimg', function () { return views; }], ['simg', function () { return sv; }]].forEach(function (p) {
+      var el = document.getElementById(p[0]); if (!el) return;
+      el.classList.add('zoomable'); el.setAttribute('tabindex', '0'); el.setAttribute('role', 'button'); el.setAttribute('title', 'Click to enlarge');
+      function go() { var src = el.getAttribute('src').replace('img/', ''); var l = p[1](), i = 0; l.forEach(function (v, j) { if (v[0] === src) i = j; }); open(l, i, el); }
+      el.addEventListener('click', go);
+      el.addEventListener('keydown', function (e) { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); go(); } });
+    });
+  })();
+
+  // ---------- mobile join bar (after the hero scrolls away) ----------
+  (function () {
+    var bar = document.getElementById('joinbar'), hero = document.getElementById('top');
+    if (!bar || !hero) return;
+    window.addEventListener('scroll', function () { bar.classList.toggle('on', hero.getBoundingClientRect().bottom < 0); }, { passive: true });
+  })();
 
   // ---------- nav highlight + back to top ----------
   (function () {
