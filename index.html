@@ -1,0 +1,810 @@
+<!doctype html><html lang="en"><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="description" content="YoMikey SMP: a Tekkit 2 towns and nations server. Found towns, run companies, form governments, sign treaties and trade on a live Exchange."><meta property="og:title" content="YoMikey SMP: Tekkit 2 Towns &amp; Nations"><meta property="og:description" content="Found towns, run companies, form nations, sign treaties and trade on a live Exchange. IP: yomikeysmp.modrinth.gg"><meta property="og:type" content="website"><meta property="og:url" content="https://mikeym41.github.io/yomikeysmp/"><meta property="og:image" content="https://mikeym41.github.io/yomikeysmp/img/og.jpg"><meta name="twitter:card" content="summary_large_image"><meta name="theme-color" content="#19e3ff"><link rel="icon" href="img/logo.png"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}/* screens + exchange menu + fair play (added) */
+.scr-main { border-radius: 14px; overflow: hidden; border: 1px solid var(--line); background: #0d1a30; display: grid; place-items: center; }
+.scr-main img { width: 100%; height: auto; display: block; image-rendering: pixelated; }
+.scr-tabs { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 12px; }
+.scr-tabs button { background: var(--deep); border: 1px solid var(--line); color: var(--muted); font: 500 13px var(--f-body); padding: 7px 12px; border-radius: 999px; cursor: pointer; }
+.scr-tabs button[aria-pressed="true"] { color: #04121c; background: var(--cyan); border-color: var(--cyan); }
+.types { display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 12px; margin-top: 40px; }
+.mcgui { background: #c6c6c6; border: 3px solid #555; border-radius: 4px; padding: 10px; box-shadow: 0 14px 30px rgba(0,0,0,.5); max-width: 440px; margin: 0 auto; position: relative; font-family: var(--f-mono); }
+.mcgui .ttl { color: #3f3f3f; font-size: 13px; margin: 0 0 6px 2px; }
+.mcgrid { display: grid; grid-template-columns: repeat(9, 1fr); gap: 2px; }
+.slot { aspect-ratio: 1; background: #8b8b8b; border: 2px solid; border-color: #373737 #fff #fff #373737; display: grid; place-items: center; font-size: 9px; font-weight: 700; color: #fff; text-shadow: 1px 1px 0 #3f3f3f; overflow: hidden; }
+.slot i { width: 62%; height: 62%; border-radius: 3px; display: block; box-shadow: inset -2px -2px 0 rgba(0,0,0,.25), inset 2px 2px 0 rgba(255,255,255,.3); }
+.slot.pane { background: #2b2b2b; }
+.slot.hot { outline: 2px solid #fff; outline-offset: -2px; }
+.tip { position: absolute; left: 46%; top: 38%; background: #100010f0; border: 2px solid #2d0a63; outline: 1px solid #100010; border-radius: 3px; padding: 7px 10px; font-size: 12px; line-height: 1.45; color: #aaa; min-width: 250px; z-index: 2; box-shadow: 0 10px 24px rgba(0,0,0,.5); }
+.tip b { color: #fff; } .tip .y { color: #ffff55; } .tip .o { color: #ffaa00; } .tip .g { color: #55ff55; } .tip .c { color: #ff5555; }
+@media (max-width: 560px) { .tip { position: static; margin-top: 10px; min-width: 0; } }
+.types.three { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+@media (max-width: 900px) { .types.three { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 560px) { .types.three { grid-template-columns: 1fr; } }
+.staff { width: 100%; border-collapse: collapse; font-size: 14px; }
+.staff th, .staff td { text-align: left; padding: 9px 10px; border-bottom: 1px solid var(--line); vertical-align: top; }
+.staff th { font-family: var(--f-display); color: var(--white); font-weight: 600; }
+.staff td { color: #c0cfe3; }
+.staff .yes { color: var(--green); } .staff .no { color: #5c6f8c; }
+.tbl-wrap { overflow-x: auto; }
+.penalty { margin-top: 18px; color: var(--muted); font-size: 15px; border-left: 2px solid var(--red); padding-left: 14px; }
+</style></head><body>
+<title>YoMikey SMP</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;600&display=swap">
+<style>
+/* Layout: one long night-city page. Header bar, wide hero over the night render, then alternating text/graphic system sections, ending in a searchable command reference. Committed dark look matching the server icon (navy + cyan + white). */
+:root {
+  color-scheme: dark;
+  --night: #070d1a;
+  --deep: #0b1527;
+  --panel: #101d34;
+  --line: #1f3355;
+  --ink: #e8f1fb;
+  --muted: #93a8c4;
+  --cyan: #19e3ff;
+  --cyan-dim: #0f8ea3;
+  --white: #ffffff;
+  --gold: #ffd166;
+  --red: #ff6b6b;
+  --green: #5ee6a3;
+  --violet: #b49bff;
+  --wood: #b98e55;
+  --wood-ink: #2a1c0c;
+  --f-display: "Chakra Petch", "Segoe UI", system-ui, sans-serif;
+  --f-body: "IBM Plex Sans", "Segoe UI", system-ui, sans-serif;
+  --f-mono: "JetBrains Mono", ui-monospace, "Cascadia Mono", Consolas, monospace;
+  --wrap: 1180px;
+}
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+@media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } * { animation: none !important; transition: none !important; } }
+body { background: var(--night); color: var(--ink); font-family: var(--f-body); font-size: 16px; line-height: 1.6; }
+body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-area-inset-top, 0px); z-index: 10; background: var(--night); }
+a { color: var(--cyan); }
+img { display: block; max-width: 100%; height: auto; }
+h1, h2, h3 { font-family: var(--f-display); line-height: 1.1; text-wrap: balance; margin: 0; }
+h2 { font-size: clamp(30px, 4.4vw, 46px); font-weight: 700; letter-spacing: -0.01em; }
+h3 { font-size: 21px; font-weight: 600; }
+p { margin: 0; }
+code, .mono { font-family: var(--f-mono); font-size: 0.88em; }
+.wrap { max-width: var(--wrap); margin: 0 auto; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+.eyebrow { font-family: var(--f-display); text-transform: uppercase; letter-spacing: 0.16em; font-size: 13px; font-weight: 600; color: var(--cyan); }
+.lede { color: var(--muted); font-size: 18px; max-width: 62ch; }
+:focus-visible { outline: 2px solid var(--cyan); outline-offset: 3px; border-radius: 4px; }
+
+/* ---------- header ---------- */
+.top { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 20; background: color-mix(in srgb, var(--night) 88%, transparent); backdrop-filter: blur(10px); border-bottom: 1px solid var(--line); }
+.top .wrap { display: flex; align-items: center; gap: 18px; padding-block: 10px; }
+.brand { display: flex; align-items: center; gap: 10px; text-decoration: none; color: var(--white); font-family: var(--f-display); font-weight: 700; font-size: 19px; letter-spacing: 0.02em; flex-shrink: 0; }
+.brand img { width: 34px; height: 34px; border-radius: 8px; }
+.nav { display: flex; gap: 4px; flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none; flex: 1; min-width: 0; }
+.nav::-webkit-scrollbar { display: none; }
+.nav a { color: var(--muted); text-decoration: none; font-size: 14px; font-weight: 500; padding: 6px 10px; border-radius: 6px; white-space: nowrap; }
+.nav a:hover { color: var(--white); background: var(--panel); }
+.ipchip { flex-shrink: 0; display: inline-flex; align-items: center; gap: 8px; background: var(--panel); border: 1px solid var(--line); color: var(--ink); font-family: var(--f-mono); font-size: 13px; padding: 7px 12px; border-radius: 8px; cursor: pointer; }
+.ipchip:hover { border-color: var(--cyan-dim); }
+.ipchip .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--green); box-shadow: 0 0 8px var(--green); }
+@media (max-width: 760px) { .ipchip .t { display: none; } }
+
+/* ---------- hero ---------- */
+.hero { position: relative; overflow: hidden; border-bottom: 1px solid var(--line); background: radial-gradient(ellipse at 70% 40%, #12305a 0%, var(--night) 62%); }
+.hero .wrap { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); gap: 28px; align-items: center; padding-block: 56px 40px; }
+.hero h1 { font-size: clamp(42px, 6.4vw, 78px); font-weight: 700; letter-spacing: -0.02em; color: var(--white); }
+.hero h1 span { color: var(--cyan); }
+.hero .lede { margin-top: 18px; color: #b8c9df; }
+.cta { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 28px; }
+.btn { display: inline-flex; align-items: center; gap: 10px; font-family: var(--f-display); font-weight: 600; font-size: 16px; padding: 13px 20px; border-radius: 10px; text-decoration: none; cursor: pointer; border: 1px solid transparent; }
+.btn-primary { background: var(--cyan); color: #04121c; }
+.btn-primary:hover { background: #63ecff; }
+.btn-ghost { background: transparent; color: var(--white); border-color: var(--line); }
+.btn-ghost:hover { border-color: var(--cyan-dim); }
+.btn .ip { font-family: var(--f-mono); font-weight: 600; font-size: 15px; }
+.copied { font-size: 13px; color: var(--green); min-height: 1.2em; margin-top: 8px; }
+.hero-art { position: relative; }
+.hero-art img { width: 100%; filter: drop-shadow(0 30px 60px rgba(0, 200, 255, 0.18)); }
+.facts { display: flex; flex-wrap: wrap; gap: 8px 22px; margin-top: 30px; color: var(--muted); font-size: 14px; }
+.facts b { color: var(--white); font-weight: 600; }
+@media (max-width: 900px) { .hero .wrap { grid-template-columns: 1fr; padding-block: 36px 28px; } }
+
+/* ---------- sections ---------- */
+section { padding-block: 84px; border-bottom: 1px solid var(--line); scroll-margin-top: 64px; }
+.head { display: grid; gap: 14px; margin-bottom: 40px; }
+.split { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 48px; align-items: center; }
+.split.rev > :first-child { order: 2; }
+@media (max-width: 900px) { .split { grid-template-columns: 1fr; gap: 30px; } .split.rev > :first-child { order: 0; } section { padding-block: 60px; } }
+.prose { display: grid; gap: 16px; color: #c5d4e8; }
+.prose strong { color: var(--white); }
+.chips { display: flex; flex-wrap: wrap; gap: 8px; }
+.chip { font-family: var(--f-mono); font-size: 13px; background: var(--deep); border: 1px solid var(--line); color: var(--cyan); padding: 4px 10px; border-radius: 6px; cursor: pointer; }
+.chip:hover { border-color: var(--cyan-dim); }
+.figure { background: var(--deep); border: 1px solid var(--line); border-radius: 16px; padding: 22px; }
+.figure figcaption { color: var(--muted); font-size: 13px; margin-top: 12px; }
+figure { margin: 0; }
+svg text { font-family: var(--f-body); }
+
+/* join steps */
+.steps { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 18px; counter-reset: s; }
+.step { background: var(--panel); border: 1px solid var(--line); border-radius: 14px; padding: 22px; display: grid; gap: 10px; align-content: start; }
+.step .n { font-family: var(--f-display); font-weight: 700; font-size: 15px; color: #04121c; background: var(--cyan); width: 30px; height: 30px; border-radius: 8px; display: grid; place-items: center; }
+.step p { color: #c0cfe3; font-size: 15px; }
+@media (max-width: 820px) { .steps { grid-template-columns: 1fr; } }
+.first { margin-top: 34px; display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 12px; }
+.first div { border-left: 2px solid var(--cyan-dim); padding: 6px 0 6px 14px; color: #c0cfe3; font-size: 15px; }
+.first b { display: block; color: var(--white); font-family: var(--f-display); font-weight: 600; }
+
+/* city tour */
+.tour { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 6fr); gap: 28px; align-items: start; }
+@media (max-width: 900px) { .tour { grid-template-columns: 1fr; } }
+.map { border-radius: 14px; overflow: hidden; border: 1px solid var(--line); }
+.gallery-main { border-radius: 14px; overflow: hidden; border: 1px solid var(--line); background: #0d1a30; aspect-ratio: 3 / 2; display: grid; place-items: center; max-width: 100%; }
+.gallery-main img { width: 100%; height: 100%; object-fit: contain; }
+.gallery-cap { margin-top: 12px; min-height: 3.2em; color: #c0cfe3; font-size: 15px; }
+.gallery-cap b { color: var(--white); font-family: var(--f-display); }
+.thumbs { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px; margin-top: 12px; }
+.thumbs button { padding: 0; border: 2px solid var(--line); border-radius: 8px; overflow: hidden; cursor: pointer; background: #0d1a30; aspect-ratio: 4 / 3; max-width: 100%; }
+.thumbs button img { width: 100%; height: 100%; object-fit: cover; }
+.thumbs button[aria-pressed="true"] { border-color: var(--cyan); }
+.districts { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 14px; margin-top: 34px; }
+.district { background: var(--panel); border: 1px solid var(--line); border-radius: 12px; padding: 16px 18px; }
+.district h3 { font-size: 17px; }
+.district .where { font-size: 12px; text-transform: uppercase; letter-spacing: 0.12em; color: var(--cyan); font-family: var(--f-display); margin-bottom: 4px; }
+.district p { color: #b6c6dc; font-size: 14px; margin-top: 6px; }
+
+/* minecraft sign mock */
+.signs { display: flex; flex-wrap: wrap; gap: 18px; justify-content: center; }
+.sign { width: 190px; max-width: 100%; aspect-ratio: 2 / 1.05; background: repeating-linear-gradient(0deg, #b98e55 0 9px, #ad8249 9px 10px); border: 4px solid #7a5530; border-radius: 3px; display: grid; align-content: center; justify-items: center; gap: 1px; font-family: var(--f-mono); font-weight: 600; font-size: 13px; color: var(--wood-ink); box-shadow: 0 10px 22px rgba(0, 0, 0, .45); position: relative; }
+.sign::after { content: ""; position: absolute; left: 50%; bottom: -26px; width: 12px; height: 22px; background: #7a5530; transform: translateX(-50%); }
+.sign .l1 { color: #1d3bb3; }
+.sign .l1.buy { color: #7b2fb5; }
+.sign .l4 { color: #1f6b2a; }
+.sign-note { color: var(--muted); font-size: 13px; text-align: center; margin-top: 36px; }
+
+/* cards grid for govs */
+.govs { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
+@media (max-width: 900px) { .govs { grid-template-columns: 1fr; } }
+.gov { background: var(--panel); border: 1px solid var(--line); border-radius: 14px; padding: 22px; display: grid; gap: 12px; align-content: start; }
+.gov .crest { width: 44px; height: 44px; }
+.gov dl { margin: 0; display: grid; grid-template-columns: auto 1fr; gap: 6px 12px; font-size: 14px; }
+.gov dt { color: var(--muted); }
+.gov dd { margin: 0; color: var(--ink); }
+.special { margin-top: 26px; display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 12px; }
+.special div { background: var(--deep); border: 1px solid var(--line); border-radius: 10px; padding: 14px 16px; font-size: 14px; color: #c0cfe3; }
+.special code { color: var(--gold); display: block; font-size: 14px; margin-bottom: 4px; }
+
+/* treaty book */
+.book { width: min(320px, 100%); margin: 0 auto; background: #efe6cf; color: #2b2112; border-radius: 4px 10px 10px 4px; padding: 26px 26px 30px 34px; box-shadow: inset 10px 0 0 #b9a77c, 0 20px 40px rgba(0, 0, 0, .5); font-family: Georgia, "Times New Roman", serif; font-size: 14px; line-height: 1.5; }
+.book h4 { font-family: Georgia, serif; margin: 0 0 10px; font-size: 17px; }
+.book .sig { margin-top: 14px; display: flex; justify-content: space-between; gap: 12px; font-style: italic; font-size: 13px; }
+.book .stamp { margin-top: 14px; font-size: 11px; letter-spacing: .12em; text-transform: uppercase; color: #6b5a33; }
+
+/* rules + faq */
+.rules { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 14px; }
+.rule { background: var(--panel); border: 1px solid var(--line); border-radius: 12px; padding: 18px; }
+.rule b { font-family: var(--f-display); font-size: 18px; color: var(--white); display: block; margin-bottom: 6px; }
+.rule p { color: #b6c6dc; font-size: 14px; }
+details { border-bottom: 1px solid var(--line); padding: 16px 0; }
+details summary { cursor: pointer; font-family: var(--f-display); font-weight: 600; font-size: 18px; color: var(--white); list-style: none; display: flex; justify-content: space-between; gap: 16px; }
+details summary::after { content: "+"; color: var(--cyan); font-size: 22px; line-height: 1; }
+details[open] summary::after { content: "−"; }
+details p { color: #c0cfe3; margin-top: 10px; max-width: 70ch; }
+
+/* commands */
+.cmdtools { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; margin-bottom: 18px; }
+.cmdtools input { flex: 1 1 260px; min-width: 0; background: var(--deep); border: 1px solid var(--line); color: var(--ink); font: inherit; padding: 11px 14px; border-radius: 10px; }
+.cmdtools input::placeholder { color: #6f86a6; }
+.tabs { display: flex; flex-wrap: wrap; gap: 6px; }
+.tabs button { background: var(--deep); border: 1px solid var(--line); color: var(--muted); font: 500 13px var(--f-body); padding: 7px 12px; border-radius: 999px; cursor: pointer; }
+.tabs button[aria-pressed="true"] { background: var(--cyan); border-color: var(--cyan); color: #04121c; }
+.cmdtable { border: 1px solid var(--line); border-radius: 12px; overflow: hidden; }
+.cmdrow { display: grid; grid-template-columns: minmax(0, 2fr) minmax(0, 3fr) auto; gap: 14px; align-items: center; padding: 11px 16px; border-top: 1px solid var(--line); }
+.cmdrow:first-child { border-top: 0; }
+.cmdrow:nth-child(even) { background: #0c1830; }
+.cmdrow code { color: var(--cyan); word-break: break-word; }
+.cmdrow .d { color: #c0cfe3; font-size: 14px; }
+.cmdrow .g { font-size: 11px; text-transform: uppercase; letter-spacing: .1em; color: var(--muted); font-family: var(--f-display); }
+@media (max-width: 680px) { .cmdrow { grid-template-columns: 1fr; gap: 4px; } }
+.empty { padding: 20px; color: var(--muted); }
+
+footer { padding-block: 40px 50px; color: var(--muted); font-size: 13px; }
+footer .wrap { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 14px; }
+.toast { position: fixed; left: 50%; bottom: calc(20px + env(safe-area-inset-bottom, 0px)); transform: translateX(-50%) translateY(20px); background: var(--white); color: #04121c; font-weight: 600; padding: 10px 16px; border-radius: 10px; opacity: 0; transition: .2s; pointer-events: none; z-index: 30; }
+.toast.on { opacity: 1; transform: translateX(-50%) translateY(0); }
+</style>
+
+<header class="top">
+  <div class="wrap">
+    <a class="brand" href="#top"><img src="img/logo.png" alt="">YoMikey SMP</a>
+    <nav class="nav" aria-label="Sections">
+      <a href="#join">Join</a><a href="#city">Forge City</a><a href="#screens">Screens</a><a href="#economy">Economy</a><a href="#towns">Towns</a>
+      <a href="#rail">Rail</a><a href="#nations">Nations</a>
+      <a href="#justice">Justice</a><a href="#fairplay">Fair play</a><a href="#commands">Commands</a><a href="#rules">Rules</a>
+    </nav>
+    <button class="ipchip" type="button" data-copy="yomikeysmp.modrinth.gg" aria-label="Copy server address"><span class="dot"></span><span class="t">yomikeysmp.modrinth.gg</span><span aria-hidden="true">⧉</span></button>
+  </div>
+</header>
+
+<div class="hero" id="top">
+  <div class="wrap">
+    <div>
+      <div class="eyebrow">Tekkit 2 · Towns &amp; Nations</div>
+      <h1 style="margin-top:14px">Build a town.<br>Run a <span>nation.</span></h1>
+      <p class="lede">YoMikey SMP is a Tekkit 2 server where players found towns, lay rail between them, start companies, form governments and sign treaties, all paid for in Forge Coins and traded on a live Exchange. It starts in Forge City, a canyon city shaped like our logo, wired with ComputerCraft screens that show the server as it happens.</p>
+      <div class="cta">
+        <button class="btn btn-primary" type="button" data-copy="yomikeysmp.modrinth.gg">Copy IP <span class="ip">yomikeysmp.modrinth.gg</span></button>
+        <a class="btn btn-ghost" href="#join">How to join</a>
+      </div>
+      <div class="facts">
+        <span><b>Tekkit 2</b> v1.2.6</span><span><b>Minecraft</b> 1.12.2</span><span><b>16</b> player slots</span><span><b>100 FC</b> starter grant</span><span><b>Live</b> ComputerCraft screens</span><span><b>4,000 × 4,000</b> pre-generated world</span>
+      </div>
+    </div>
+    <div class="hero-art"><img src="img/hero.webp" alt="Forge City at night: a canyon city with a giant glowing Y monument inside a hexagon ring" width="1800" height="1024"></div>
+  </div>
+</div>
+
+<main>
+<!-- ================= JOIN ================= -->
+<section id="join">
+  <div class="wrap">
+    <div class="head">
+      <div class="eyebrow">Getting started</div>
+      <h2>Join in three steps</h2>
+      <p class="lede">You need the same modpack as the server. Everything else (the economy, towns, nations) is built into the server, so there's nothing extra to install.</p>
+    </div>
+    <div class="steps">
+      <div class="step"><div class="n">1</div><h3>Get the Technic Launcher</h3><p>Download it from technicpack.net, sign in with your Minecraft account, and search the modpacks for <b>Tekkit 2</b>.</p></div>
+      <div class="step"><div class="n">2</div><h3>Install Tekkit 2 v1.2.6</h3><p>Pick version <b>1.2.6</b> so it matches the server, then press Play and let it finish installing. We recommend giving it 6 GB of RAM or more in the launcher settings.</p></div>
+      <div class="step"><div class="n">3</div><h3>Add the server</h3><p>Multiplayer → Add Server → address <code>yomikeysmp.modrinth.gg</code>. Join, and you'll land on the spawn deck facing the Y.</p></div>
+    </div>
+    <div class="first">
+      <div><b>Check your wallet</b>New players get 100 Forge Coins. Type <code>/bal</code>.</div>
+      <div><b>Grab a free room</b>Stand in an empty cliff pod or tower room and type <code>/lot claim</code>.</div>
+      <div><b>Sell your first haul</b>Bring ore to the Exchange and type <code>/exchange</code> to open the trading menu.</div>
+      <div><b>Head out</b>Travel 160+ blocks from spawn and found a town with <code>/t new</code>.</div>
+      <div><b>Read the handbook</b>New players get one in their inventory. In chat, <code>/guide start</code> walks you through your first hour.</div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= CITY ================= -->
+<section id="city">
+  <div class="wrap">
+    <div class="head">
+      <div class="eyebrow">Spawn</div>
+      <h2>Forge City</h2>
+      <p class="lede">From above, the canyon is the YoMikey Y. The city has three levels: the rim streets, two terraces of cliff walkways, and the canyon floor with its river and Metro. Six glass ladder towers connect them.</p>
+    </div>
+    <div class="tour">
+      <figure>
+        <div class="map"><img src="img/map.webp" alt="Top-down map of Forge City showing the Y-shaped canyon and labelled districts" width="1030" height="1074"></div>
+        <figcaption class="gallery-cap" style="min-height:0">The map, north up. The spawn deck hangs over the south arm of the canyon.</figcaption>
+      </figure>
+      <div>
+        <div class="gallery-main"><img id="gimg" src="img/y-night.webp" alt=""></div>
+        <p class="gallery-cap" id="gcap"></p>
+        <div class="thumbs" id="thumbs" role="group" aria-label="City views"></div>
+      </div>
+    </div>
+    <div class="districts">
+      <div class="district"><div class="where">Center</div><h3>The Y &amp; the lake</h3><p>An 80-block monument on an island. Causeways cross the lake; the Metro loops around it.</p></div>
+      <div class="district"><div class="where">West rim</div><h3>Market Hall, Exchange, Shop Lots</h3><p>Chest shops inside the hall, the Exchange with its trading menu and live price screen, and 15 lots to rent.</p></div>
+      <div class="district"><div class="where">East rim</div><h3>Vault Bank, Portal Hub, Towers</h3><p>Personal vaults, the Nether portal, and two apartment towers with roof gardens.</p></div>
+      <div class="district"><div class="where">North rim</div><h3>Hall of Nations &amp; Justice</h3><p>The treaty registry, the Courthouse, the Penitentiary and Embassy Row.</p></div>
+      <div class="district"><div class="where">Canyon walls</div><h3>Cliff Pods</h3><p>Glass apartments built into the rock along the ledges. Free to claim.</p></div>
+      <div class="district"><div class="where">Corners</div><h3>Reactor &amp; News Wire</h3><p>A cooling tower landmark in the north-east and the broadcast tower in the north-west, with the News Wire screen on its face.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= SCREENS ================= -->
+<section id="screens">
+  <div class="wrap">
+    <div class="split">
+      <div class="prose">
+        <div class="eyebrow">ComputerCraft</div>
+        <h2>The city has screens</h2>
+        <p>Forge City is wired with real ComputerCraft advanced monitors. Each one has a computer behind it running our display program, and the server feeds it live data every 20 seconds: who's online, Exchange prices, the news, wars and treaties.</p>
+        <p><strong>The spawn board</strong> is the first thing you see. It rotates through the welcome screen, live server stats, prices, headlines and a getting-started guide. <strong>Tap any screen</strong> to flip the page.</p>
+        <p><strong>The Exchange board</strong> shows every price with its 24-hour change, how much stock the Exchange holds, the day's biggest movers, and a price chart for each item.</p>
+        <p class="sign-note" style="text-align:left;margin-top:0">These pictures are drawn by the real screen program, using example data.</p>
+      </div>
+      <figure>
+        <div class="scr-main"><img id="simg" src="img/screen-spawn-1.webp" alt="" width="878" height="488"></div>
+        <figcaption class="gallery-cap" id="scap"></figcaption>
+        <div class="scr-tabs" id="stabs" role="group" aria-label="Screen pages"></div>
+      </figure>
+    </div>
+    <div class="types">
+      <div class="district"><div class="where">Spawn deck</div><h3>Spawn board</h3><p>Logo, live stats, prices, news and first steps.</p></div>
+      <div class="district"><div class="where">Exchange</div><h3>Exchange ticker</h3><p>Every price, stock, 24h change, movers and charts.</p></div>
+      <div class="district"><div class="where">News tower</div><h3>News Wire</h3><p>Wars, treaties, elections and new towns as they happen.</p></div>
+      <div class="district"><div class="where">Metro</div><h3>Departures</h3><p>Every station and the open freight jobs with their pay.</p></div>
+      <div class="district"><div class="where">Hall of Nations</div><h3>Nations board</h3><p>Governments, leaders, treaties, wars and Council votes.</p></div>
+      <div class="district"><div class="where">Courthouse</div><h3>Court docket</h3><p>Open cases, the judges, and how many are in jail.</p></div>
+      <div class="district"><div class="where">Market & Bank</div><h3>Shops & leaderboards</h3><p>What's for sale, auctions ending soon, richest players and top companies.</p></div>
+      <div class="district"><div class="where">Apartments</div><h3>Lots for rent</h3><p>Free apartments and shop lots, live.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= ECONOMY ================= -->
+<section id="economy">
+  <div class="wrap">
+    <div class="split">
+      <div class="prose">
+        <div class="eyebrow">Economy</div>
+        <h2>Forge Coins</h2>
+        <p>Every player has a coin balance on the server. Coins are earned by selling to the Exchange or to other players, and spent in shops, the auction house, rent, town upkeep and taxes.</p>
+        <p><strong>The Exchange</strong> trades 20+ materials, and the list grows. Prices move with its stock: flood it with iron and iron gets cheap, run it dry and sellers get paid more. It only sells what players have sold to it, so nothing comes from thin air.</p>
+        <p><strong>ProjectE is mined-only for rare goods.</strong> Uranium, iridium, steel, desh, titanium, nether stars and dark/red matter have no EMC, so they have to be mined or made. That's what gives mining towns their value.</p>
+        <div class="chips"><span class="chip" data-copy="/bal">/bal</span><span class="chip" data-copy="/pay">/pay</span><span class="chip" data-copy="/exchange">/exchange</span><span class="chip" data-copy="/exchange list">/exchange list</span><span class="chip" data-copy="/sell all">/sell all</span><span class="chip" data-copy="/store">/store</span><span class="chip" data-copy="/ah">/ah</span></div>
+      </div>
+      <figure class="figure">
+        <svg viewBox="0 0 520 330" width="100%" role="img" aria-label="How Forge Coins flow between miners, the Exchange, shops and the auction house">
+          <defs><marker id="ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 L10 5 L0 10z" fill="#19e3ff"/></marker></defs>
+          <g fill="#101d34" stroke="#1f3355" stroke-width="1.5">
+            <rect x="12" y="20" width="150" height="70" rx="12"/><rect x="185" y="20" width="150" height="70" rx="12"/><rect x="358" y="20" width="150" height="70" rx="12"/>
+            <rect x="12" y="230" width="150" height="70" rx="12"/><rect x="185" y="230" width="150" height="70" rx="12"/><rect x="358" y="230" width="150" height="70" rx="12"/>
+          </g>
+          <circle cx="260" cy="160" r="46" fill="#0b1527" stroke="#19e3ff" stroke-width="2"/>
+          <text x="260" y="156" text-anchor="middle" fill="#ffffff" font-size="20" font-weight="700">FC</text>
+          <text x="260" y="176" text-anchor="middle" fill="#93a8c4" font-size="11">your balance</text>
+          <g fill="#ffffff" font-size="15" font-weight="600" text-anchor="middle">
+            <text x="87" y="52">Mine &amp; craft</text><text x="260" y="52">The Exchange</text><text x="433" y="52">Player shops</text>
+            <text x="87" y="262">Auction house</text><text x="260" y="262">Rent &amp; upkeep</text><text x="433" y="262">Freight jobs</text>
+          </g>
+          <g fill="#93a8c4" font-size="11" text-anchor="middle">
+            <text x="87" y="72">ore, ingots, machines</text><text x="260" y="72">/sell · /buy · live prices</text><text x="433" y="72">[Shop] and [Buy] signs</text>
+            <text x="87" y="282">bids, buy-now, 3% fee</text><text x="260" y="282">lots, towns, taxes</text><text x="433" y="282">paid on delivery</text>
+          </g>
+          <g stroke="#19e3ff" stroke-width="2" fill="none" marker-end="url(#ar)">
+            <path d="M162 55 H183"/><path d="M260 92 V112"/><path d="M412 92 L296 132"/>
+            <path d="M226 192 L120 228"/><path d="M260 208 V228"/><path d="M296 190 L408 228"/>
+          </g>
+        </svg>
+        <figcaption>Coins in: selling to the Exchange, shops, auctions and freight. Coins out: buying, rent, upkeep, fees and taxes.</figcaption>
+      </figure>
+    </div>
+
+    <div class="split rev" style="margin-top:70px">
+      <div class="prose">
+        <div class="eyebrow">Run a shop</div>
+        <h3 style="font-size:28px">Signs on chests</h3>
+        <p>Put a chest in the Market Hall, your shop lot or your town, then place a sign on it. Line 1 is <code>[Shop]</code> to sell or <code>[Buy]</code> to buy, line 2 is the amount, and line 3 is the price. Right-click the sign to activate it.</p>
+        <p>Buyers pay straight into your balance, even while you're offline. Every active shop shows up in <code>/store</code>, so people can find you.</p>
+        <p>Selling something rare? List it on the auction house with <code>/ah sell &lt;price&gt;</code> or start a bidding war with <code>/ah auction &lt;start&gt; [hours]</code>.</p>
+      </div>
+      <div>
+        <div class="signs">
+          <div class="sign"><span class="l1">[Shop]</span><span>Sell 16</span><span>120 FC</span><span class="l4">kickface102</span></div>
+          <div class="sign"><span class="l1 buy">[Buy]</span><span>Buying 64</span><span>300 FC</span><span class="l4">IronholdCo</span></div>
+        </div>
+        <p class="sign-note">Example signs after activation. A [Buy] sign pays sellers from the owner's balance.</p>
+      </div>
+    </div>
+
+    <div class="split" style="margin-top:70px">
+      <div class="prose">
+        <div class="eyebrow">Trade in one menu</div>
+        <h3 style="font-size:28px">The Exchange menu</h3>
+        <p>Inside the Exchange, type <code>/exchange</code> or right-click a terminal. Every item opens in one chest-style menu, with its price, the Exchange's stock and how many you're carrying in the tooltip.</p>
+        <p><strong>Left-click</strong> buys one and <strong>shift-click</strong> buys 16. <strong>Right-click</strong> sells one and <strong>shift-right-click</strong> sells all you carry. The hopper sells everything the Exchange buys in one go. It works with the normal Tekkit client, nothing to install.</p>
+        <p><strong>Want something new traded?</strong> Hold it and type <code>/exchange request</code>. Staff see a most-wanted list with a suggested price, and when an item gets listed the News Wire announces it.</p>
+      </div>
+      <figure class="figure"><div class="mcgui" aria-hidden="true"><p class="ttl">The Exchange</p><div class="mcgrid"><div class="slot" title="Coal"><i style="background:#3a3a3a"></i></div><div class="slot hot" title="Iron"><i style="background:#d8d8d8"></i></div><div class="slot" title="Gold"><i style="background:#f5d33b"></i></div><div class="slot" title="Rs"><i style="background:#c0281f"></i></div><div class="slot" title="Lapis"><i style="background:#2b4fb8"></i></div><div class="slot" title="Qtz"><i style="background:#ece6dc"></i></div><div class="slot" title="Dia"><i style="background:#5de5e0"></i></div><div class="slot" title="Em"><i style="background:#18c25a"></i></div><div class="slot" title="Cu"><i style="background:#d2793a"></i></div><div class="slot" title="Tin"><i style="background:#c9d3dc"></i></div><div class="slot" title="Ag"><i style="background:#b9c8d6"></i></div><div class="slot" title="Pb"><i style="background:#5f6a86"></i></div><div class="slot" title="Steel"><i style="background:#8a8f96"></i></div><div class="slot" title="Rub"><i style="background:#2f2f2f"></i></div><div class="slot" title="U"><i style="background:#5bd13c"></i></div><div class="slot" title="Star"><i style="background:#fff6c2"></i></div><div class="slot" title="Pearl"><i style="background:#1f6f62"></i></div><div class="slot" title="Blaze"><i style="background:#f0a52a"></i></div><div class="slot" title="Log"><i style="background:#6b4f2a"></i></div><div class="slot" title="Wheat"><i style="background:#d9b54b"></i></div><div class="slot" title="Si"><i style="background:#6b6b78"></i></div><div class="slot"></div><div class="slot"></div><div class="slot"></div><div class="slot"></div><div class="slot"></div><div class="slot"></div><div class="slot"></div><div class="slot"></div><div class="slot"></div><div class="slot"></div><div class="slot"></div><div class="slot"></div><div class="slot"></div><div class="slot"></div><div class="slot"></div><div class="slot"></div><div class="slot"></div><div class="slot"></div><div class="slot"></div><div class="slot"></div><div class="slot"></div><div class="slot"></div><div class="slot"></div><div class="slot"></div><div class="slot pane"></div><div class="slot pane"></div><div class="slot pane"></div><div class="slot" title="Sell everything"><i style="background:#555;border-radius:0 0 40% 40%"></i></div><div class="slot" title="Your balance"><i style="background:#f5d33b"></i></div><div class="slot" title="How to trade"><i style="background:#7a4b2a"></i></div><div class="slot pane"></div><div class="slot pane"></div><div class="slot pane"></div></div><div class="tip"><b>Iron Ingot</b><br>Buy <span class="y">13.92 FC</span> each<br>Sell <span class="o">11.38 FC</span> each<br>The Exchange has: <b>409</b> (wants about 1024) <span class="g">▲ rising</span><br>You carry: <b>64</b><br><br><span class="g">Left-click</span>: buy 1 &nbsp; <span class="g">Shift-left</span>: buy 16<br><span class="o">Right-click</span>: sell 1 &nbsp; <span class="o">Shift-right</span>: sell all 64</div></div>
+        <figcaption>Mockup of the trading menu. In game, the slots show the real items.</figcaption>
+      </figure>
+    </div>
+  </div>
+</section>
+
+<!-- ================= TOWNS ================= -->
+<section id="towns">
+  <div class="wrap">
+    <div class="split">
+      <div class="prose">
+        <div class="eyebrow">Towns</div>
+        <h2>Claim your land</h2>
+        <p>Found a town at least 160 blocks from spawn with <code>/t new &lt;name&gt;</code>. Your chunk becomes the town's home, and you can expand one chunk at a time with <code>/t claim</code>.</p>
+        <p><strong>Town land is protected.</strong> Outsiders can't build, break, open chests or machines, or blow anything up. Quarries and turtles keep working. PvP is off unless your town turns it on.</p>
+        <p>Towns have their own bank. Mayors set a daily tax, and the town pays daily upkeep. If the bank runs dry, the town loses its newest chunk each day. Keep it funded.</p>
+        <div class="chips"><span class="chip" data-copy="/t help">/t help</span><span class="chip" data-copy="/t map">/t map</span><span class="chip" data-copy="/t invite">/t invite</span><span class="chip" data-copy="/t deposit">/t deposit</span><span class="chip" data-copy="/tc">/tc</span></div>
+      </div>
+      <figure class="figure">
+        <svg viewBox="0 0 440 330" width="100%" role="img" aria-label="Chunk map: a town's home chunk with claimed chunks around it, next to wilderness">
+          <g id="grid"></g>
+          <g font-size="12" fill="#c0cfe3">
+            <rect x="20" y="292" width="14" height="14" rx="2" fill="#19e3ff"/><text x="40" y="304">home</text>
+            <rect x="92" y="292" width="14" height="14" rx="2" fill="#0f8ea3"/><text x="112" y="304">claimed</text>
+            <rect x="178" y="292" width="14" height="14" rx="2" fill="#1a2a47"/><text x="198" y="304">wilderness</text>
+            <rect x="282" y="292" width="14" height="14" rx="2" fill="#7a3b4b"/><text x="302" y="304">another town</text>
+          </g>
+        </svg>
+        <figcaption>What <code>/t map</code> shows. New claims must touch your land, and towns keep a 2-chunk gap between them.</figcaption>
+      </figure>
+    </div>
+    <div class="special" style="margin-top:40px">
+      <div><code>500 FC</code>to found a town</div>
+      <div><code>50 FC / chunk</code>to claim, paid from the town bank</div>
+      <div><code>10 FC + 2 FC per chunk</code>daily upkeep</div>
+      <div><code>8 chunks + 4 per resident</code>maximum claims</div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= RAIL ================= -->
+<section id="rail">
+  <div class="wrap">
+    <div class="head">
+      <div class="eyebrow">Rail &amp; logistics</div>
+      <h2>Stations, rail and freight</h2>
+      <p class="lede">Towns build stations. Players lay the track. Ride a minecart from one station to another and the link is added to the network map automatically. Then people pay each other to move goods along it.</p>
+    </div>
+    <figure class="figure">
+      <svg viewBox="0 0 1000 260" width="100%" role="img" aria-label="A freight job: Greenvale posts a supply order, a hauler mines iron in Ironhold and rides the rail to Greenvale to deliver it">
+        <defs><marker id="ar2" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 L10 5 L0 10z" fill="#ffd166"/></marker></defs>
+        <path d="M150 120 C 380 40, 620 200, 850 120" stroke="#3a4f75" stroke-width="10" fill="none" stroke-linecap="round"/>
+        <path d="M150 120 C 380 40, 620 200, 850 120" stroke="#93a8c4" stroke-width="2" fill="none" stroke-dasharray="3 9"/>
+        <g><circle cx="150" cy="120" r="46" fill="#101d34" stroke="#19e3ff" stroke-width="3"/><text x="150" y="116" text-anchor="middle" fill="#fff" font-size="14" font-weight="700">Ironhold</text><text x="150" y="133" text-anchor="middle" fill="#93a8c4" font-size="11">station</text></g>
+        <g><circle cx="850" cy="120" r="46" fill="#101d34" stroke="#19e3ff" stroke-width="3"/><text x="850" y="116" text-anchor="middle" fill="#fff" font-size="14" font-weight="700">Greenvale</text><text x="850" y="133" text-anchor="middle" fill="#93a8c4" font-size="11">station</text></g>
+        <rect x="470" y="98" width="46" height="24" rx="4" fill="#ffd166"/><circle cx="480" cy="126" r="5" fill="#0b1527"/><circle cx="506" cy="126" r="5" fill="#0b1527"/>
+        <text x="493" y="80" text-anchor="middle" fill="#ffd166" font-size="13" font-weight="600">64 iron by minecart</text>
+        <g font-size="13" fill="#c0cfe3">
+          <text x="40" y="200" fill="#fff" font-weight="600">1. Greenvale posts a job</text><text x="40" y="220">/freight supply Greenvale 64 300</text><text x="40" y="238" fill="#93a8c4">300 FC is held until delivery</text>
+          <text x="370" y="200" fill="#fff" font-weight="600">2. A hauler takes it</text><text x="370" y="220">mines 64 iron, rides the rail</text><text x="370" y="238" fill="#93a8c4">first ride opens the rail link</text>
+          <text x="690" y="200" fill="#fff" font-weight="600">3. Delivered at the station</text><text x="690" y="220">/freight deliver 1 → +300 FC</text><text x="690" y="238" fill="#93a8c4">buyer picks up: /station collect</text>
+        </g>
+      </svg>
+      <figcaption>Haul jobs work the other way: you hand your own cargo to a hauler, who puts up a deposit you keep if they never deliver.</figcaption>
+    </figure>
+    <div class="chips" style="margin-top:20px"><span class="chip" data-copy="/station list">/station list</span><span class="chip" data-copy="/station links">/station links</span><span class="chip" data-copy="/station route">/station route A B</span><span class="chip" data-copy="/freight list">/freight list</span><span class="chip" data-copy="/freight help">/freight help</span><span class="chip" data-copy="/station collect">/station collect</span></div>
+  </div>
+</section>
+
+<!-- ================= COMPANIES ================= -->
+<section id="companies">
+  <div class="wrap">
+    <div class="split rev">
+      <div class="prose">
+        <div class="eyebrow">Business</div>
+        <h2>Companies</h2>
+        <p>Start a mining outfit, a power company or a rail line with <code>/co new &lt;name&gt;</code>. You become CEO and own all 1,000 shares.</p>
+        <p>Hire staff, promote managers and pay salaries from the company bank. Sell stakes by transferring shares, then pay everyone at once with <code>/co dividend</code>. The payout is split by how many shares each person holds.</p>
+        <div class="chips"><span class="chip" data-copy="/co help">/co help</span><span class="chip" data-copy="/co shares">/co shares</span><span class="chip" data-copy="/co dividend">/co dividend</span><span class="chip" data-copy="/co pay">/co pay</span></div>
+      </div>
+      <figure class="figure">
+        <svg viewBox="0 0 470 260" width="100%" role="img" aria-label="Example cap table: CEO 600 shares, investor 250, staff 150, and how a 1000 FC dividend splits">
+          <g transform="translate(130 130)">
+            <circle r="92" fill="none" stroke="#19e3ff" stroke-width="36" stroke-dasharray="347 578" transform="rotate(-90)"/>
+            <circle r="92" fill="none" stroke="#b49bff" stroke-width="36" stroke-dasharray="144.5 578" stroke-dashoffset="-347" transform="rotate(-90)"/>
+            <circle r="92" fill="none" stroke="#ffd166" stroke-width="36" stroke-dasharray="86.7 578" stroke-dashoffset="-491.5" transform="rotate(-90)"/>
+            <text text-anchor="middle" y="-2" fill="#fff" font-size="22" font-weight="700">1,000</text>
+            <text text-anchor="middle" y="18" fill="#93a8c4" font-size="12">shares</text>
+          </g>
+          <g font-size="13" fill="#c0cfe3">
+            <rect x="262" y="62" width="12" height="12" rx="2" fill="#19e3ff"/><text x="282" y="73">CEO · 600 → 600 FC</text>
+            <rect x="262" y="96" width="12" height="12" rx="2" fill="#b49bff"/><text x="282" y="107">Investor · 250 → 250 FC</text>
+            <rect x="262" y="130" width="12" height="12" rx="2" fill="#ffd166"/><text x="282" y="141">Staff · 150 → 150 FC</text>
+            <text x="262" y="180" fill="#93a8c4" font-size="12">Example: /co dividend 1000</text>
+          </g>
+        </svg>
+        <figcaption>Example numbers. <code>/co shares</code> shows a company's real shareholders.</figcaption>
+      </figure>
+    </div>
+  </div>
+</section>
+
+<!-- ================= NATIONS ================= -->
+<section id="nations">
+  <div class="wrap">
+    <div class="head">
+      <div class="eyebrow">Government</div>
+      <h2>Nations</h2>
+      <p class="lede">A town mayor founds a nation for 1,000 FC from the town bank and invites other towns to join. Every resident of a member town becomes a citizen. Then the nation picks how it's governed.</p>
+    </div>
+    <div class="govs">
+      <div class="gov">
+        <svg class="crest" viewBox="0 0 44 44" aria-hidden="true"><path d="M6 32 L10 12 L18 22 L22 8 L26 22 L34 12 L38 32 Z" fill="#ffd166"/><rect x="6" y="33" width="32" height="5" rx="1" fill="#ffd166"/></svg>
+        <h3>Monarchy</h3>
+        <dl><dt>Leader</dt><dd>The Monarch (capital's mayor)</dd><dt>Chosen by</dt><dd>Inheritance of the capital</dd><dt>Laws</dt><dd>Decree: in force immediately</dd></dl>
+      </div>
+      <div class="gov">
+        <svg class="crest" viewBox="0 0 44 44" aria-hidden="true"><rect x="8" y="16" width="4" height="18" fill="#19e3ff"/><rect x="20" y="16" width="4" height="18" fill="#19e3ff"/><rect x="32" y="16" width="4" height="18" fill="#19e3ff"/><path d="M4 15 L22 5 L40 15 Z" fill="#19e3ff"/><rect x="4" y="35" width="36" height="4" fill="#19e3ff"/></svg>
+        <h3>Republic</h3>
+        <dl><dt>Leader</dt><dd>The President</dd><dt>Chosen by</dt><dd>Citizen election every 7 days</dd><dt>Laws</dt><dd>Decree by the President</dd></dl>
+      </div>
+      <div class="gov">
+        <svg class="crest" viewBox="0 0 44 44" aria-hidden="true"><rect x="8" y="18" width="28" height="20" rx="2" fill="none" stroke="#5ee6a3" stroke-width="3"/><rect x="16" y="14" width="12" height="4" fill="#5ee6a3"/><path d="M17 8 L22 14 L31 3" stroke="#5ee6a3" stroke-width="3" fill="none"/></svg>
+        <h3>Democracy</h3>
+        <dl><dt>Leader</dt><dd>The Chancellor</dd><dt>Chosen by</dt><dd>Citizen election every 7 days</dd><dt>Laws</dt><dd>48-hour citizen vote, 25% quorum</dd></dl>
+      </div>
+    </div>
+    <div class="special">
+      <div><code>TAX 20</code>Every member town pays 20 FC a day into the national treasury.</div>
+      <div><code>GOV democracy</code>Changes the system of government.</div>
+      <div><code>CONSTITUTION …</code>Writes the founding document. Anyone can read it with /n constitution</div>
+      <div><code>anything else</code>Recorded in the nation's law code, listed in /n laws</div>
+    </div>
+    <p class="lede" style="margin-top:24px">Elections run 48 hours with secret ballots: <code>/n run</code> to stand, <code>/n vote &lt;name&gt;</code> to vote. Chat shows your nation and town, like <code>[Ironreach·Ironhold]</code>.</p>
+  </div>
+</section>
+
+<!-- ================= DIPLOMACY ================= -->
+<section id="diplomacy">
+  <div class="wrap">
+    <div class="split">
+      <div class="prose">
+        <div class="eyebrow">Diplomacy</div>
+        <h2>Treaties are real documents</h2>
+        <p>A leader drafts a treaty with <code>/treaty draft &lt;nation&gt; &lt;type&gt; &lt;terms&gt;</code>. The other leader gets Sign and Reject buttons. Once it's signed, both leaders receive an official written book, and the treaty is posted on the Registry boards in the Hall of Nations.</p>
+        <p><strong>Treaties do things.</strong> An alliance stops allies hurting each other and blocks war between them. A trade treaty removes tariffs. A non-aggression pact forbids declaring war. A peace treaty ends one.</p>
+        <p>Leaders can set <strong>tariffs</strong> on foreign shoppers, impose <strong>sanctions</strong> that block trade, and vote in the <strong>Grand Council</strong>, where a passed <code>SANCTION &lt;nation&gt;</code> resolution binds everyone.</p>
+        <div class="chips"><span class="chip" data-copy="/treaty list">/treaty list</span><span class="chip" data-copy="/diplo">/diplo</span><span class="chip" data-copy="/council">/council</span><span class="chip" data-copy="/news">/news</span><span class="chip" data-copy="/war rules">/war rules</span></div>
+      </div>
+      <div class="book" role="img" aria-label="Example treaty book">
+        <h4>Alliance Treaty #1</h4>
+        <p>Between the nation of <b>Ironreach</b> and the nation of <b>Verdant</b>.</p>
+        <p style="margin-top:10px">Mutual alliance: citizens cannot harm each other, and neither nation may declare war on the other.</p>
+        <p style="margin-top:10px"><i>Each defends the other's rail lines and shares the Ironhold–Greenvale freight route.</i></p>
+        <div class="sig"><span>— Monarch of Ironreach</span><span>— Chancellor of Verdant</span></div>
+        <div class="stamp">Registered at the Hall of Nations, Forge City · example</div>
+      </div>
+    </div>
+
+    <figure class="figure" style="margin-top:60px">
+      <svg viewBox="0 0 1000 170" width="100%" role="img" aria-label="War timeline: declaration, 24 hour preparation, up to 7 days of fighting, then a 3 day truce">
+        <rect x="40" y="70" width="140" height="26" rx="6" fill="#3b4f73"/>
+        <rect x="180" y="70" width="560" height="26" rx="6" fill="#ff6b6b"/>
+        <rect x="740" y="70" width="220" height="26" rx="6" fill="#5ee6a3"/>
+        <g font-size="14" font-weight="600" fill="#fff"><text x="40" y="54">Declared</text><text x="180" y="54">Fighting begins</text><text x="740" y="54">War ends</text></g>
+        <g font-size="13" fill="#0b1527" font-weight="600"><text x="56" y="88">24h to prepare</text><text x="196" y="88">PvP between the two nations everywhere · kills scored</text><text x="756" y="88">3-day truce</text></g>
+        <g font-size="12" fill="#93a8c4"><text x="40" y="150">/war declare &lt;nation&gt; &lt;reason&gt;</text><text x="180" y="124">Town protection stays on: fight, don't grief.</text><text x="740" y="124">Ends by peace treaty, surrender</text><text x="740" y="142">or after 7 days</text></g>
+      </svg>
+    </figure>
+  </div>
+</section>
+
+<!-- ================= JUSTICE ================= -->
+<section id="justice">
+  <div class="wrap">
+    <div class="head">
+      <div class="eyebrow">Justice</div>
+      <h2>Courts and the Penitentiary</h2>
+      <p class="lede">Got scammed or griefed? Take it to court. Judges are appointed by staff, and every conviction goes on the player's public record.</p>
+    </div>
+    <figure class="figure">
+      <svg viewBox="0 0 1000 200" width="100%" role="img" aria-label="Court process: file a case, both sides add statements, a judge takes it and calls a hearing, then a verdict with jail, fine or restitution">
+        <defs><marker id="ar3" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 L10 5 L0 10z" fill="#19e3ff"/></marker></defs>
+        <g fill="#101d34" stroke="#1f3355" stroke-width="1.5">
+          <rect x="10" y="40" width="170" height="86" rx="12"/><rect x="210" y="40" width="170" height="86" rx="12"/><rect x="410" y="40" width="170" height="86" rx="12"/><rect x="610" y="40" width="170" height="86" rx="12"/><rect x="810" y="40" width="180" height="86" rx="12" stroke="#19e3ff"/>
+        </g>
+        <g stroke="#19e3ff" stroke-width="2" marker-end="url(#ar3)"><path d="M182 83 H207"/><path d="M382 83 H407"/><path d="M582 83 H607"/><path d="M782 83 H807"/></g>
+        <g text-anchor="middle" fill="#fff" font-size="15" font-weight="600"><text x="95" y="72">File</text><text x="295" y="72">Evidence</text><text x="495" y="72">Judge</text><text x="695" y="72">Hearing</text><text x="900" y="72">Verdict</text></g>
+        <g text-anchor="middle" fill="#93a8c4" font-size="12"><text x="95" y="94">/court file</text><text x="95" y="110">25 FC fee</text><text x="295" y="94">/court statement</text><text x="295" y="110">both sides</text><text x="495" y="94">/court take</text><text x="495" y="110">appointed judges</text><text x="695" y="94">both summoned</text><text x="695" y="110">to the Courthouse</text><text x="900" y="94">jail · fine</text><text x="900" y="110">restitution to victim</text></g>
+        <text x="10" y="170" fill="#c0cfe3" font-size="13">Example verdict: <tspan fill="#19e3ff" font-family="JetBrains Mono, monospace">/court verdict 3 guilty jail 30 fine 100 pay 200</tspan></text>
+      </svg>
+      <figcaption>Jail time only counts down while you're online. Inmates stay inside the Penitentiary and can't use /spawn or teleports.</figcaption>
+    </figure>
+  </div>
+</section>
+
+<!-- ================= FAIR PLAY ================= -->
+<section id="fairplay">
+  <div class="wrap">
+    <div class="head">
+      <div class="eyebrow">Fair play</div>
+      <h2>Your stuff is safe here</h2>
+      <p class="lede">A server like this only works if people trust it. These are built in from day one.</p>
+    </div>
+    <div class="types three" style="margin-top:0">
+      <div class="district"><div class="where">Every block</div><h3>Grief logging &amp; rollback</h3><p>Every block placed, broken or blown up is logged. Staff can see who did it and put it back exactly as it was.</p></div>
+      <div class="district"><div class="where">/report</div><h3>Reports reach staff</h3><p>Report a player with your location attached, even when no staff are online. You're told when it's handled.</p></div>
+      <div class="district"><div class="where">Spawn</div><h3>Safe zone</h3><p>Forge City is protected and mob-free, and PvP is always off there, even during wars.</p></div>
+      <div class="district"><div class="where">Claims</div><h3>Protected land</h3><p>Town claims, lots and vaults can only be touched by their owners and people they trust.</p></div>
+      <div class="district"><div class="where">/court</div><h3>Player disputes</h3><p>Scammed? Take them to court. Judges can fine, jail or order payback.</p></div>
+      <div class="district"><div class="where">/rules · /guide</div><h3>Rules &amp; handbook</h3><p>Clickable rules and guides in chat, and a handbook book for every new player.</p></div>
+    </div>
+    <div style="margin-top:46px">
+      <h3>Staff can only do what their rank allows</h3>
+      <p class="lede" style="margin:10px 0 18px">No one gets op except the owner. Every staff action is logged, and staff can only act on people below their rank.</p>
+      <div class="tbl-wrap"><table class="staff">
+        <tr><th></th><th>Mod</th><th>Admin</th><th>Owner</th></tr>
+        <tr><td>Reports, warnings, mutes, kicks, jail</td><td class="yes">Yes</td><td class="yes">Yes</td><td class="yes">Yes</td></tr>
+        <tr><td>Freeze a suspected cheater, teleport to reports</td><td class="yes">Yes</td><td class="yes">Yes</td><td class="yes">Yes</td></tr>
+        <tr><td>Roll back grief</td><td>Up to 24 h, within 50 blocks</td><td class="yes">Unlimited</td><td class="yes">Unlimited</td></tr>
+        <tr><td>Ban</td><td>Up to 3 days</td><td class="yes">Any length</td><td class="yes">Any length</td></tr>
+        <tr><td>Economy tools, Exchange listings, lots, judges</td><td class="no">No</td><td class="yes">Yes</td><td class="yes">Yes</td></tr>
+        <tr><td>Make admins, server settings</td><td class="no">No</td><td class="no">No</td><td class="yes">Yes</td></tr>
+      </table></div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= COMMANDS ================= -->
+<section id="commands">
+  <div class="wrap">
+    <div class="head">
+      <div class="eyebrow">Reference</div>
+      <h2>Every command</h2>
+      <p class="lede">Search or filter by system. Click a command to copy it.</p>
+    </div>
+    <div class="cmdtools">
+      <label for="q" class="eyebrow" style="position:absolute;left:-9999px">Search commands</label>
+      <input id="q" type="search" placeholder="Search, e.g. claim, vote, sell" autocomplete="off">
+      <div class="tabs" id="tabs" role="group" aria-label="Filter by system"></div>
+    </div>
+    <div class="cmdtable" id="cmds"></div>
+  </div>
+</section>
+
+<!-- ================= RULES & FAQ ================= -->
+<section id="rules">
+  <div class="wrap">
+    <div class="head"><div class="eyebrow">Server rules</div><h2>Keep it fun for everyone</h2></div>
+    <div class="rules">
+      <div class="rule"><b>1. Be decent</b><p>No harassment, slurs, hate speech or spam. Keep chat, signs, names and builds PG-13.</p></div>
+      <div class="rule"><b>2. No griefing or stealing</b><p>Don't break, take or change anything that isn't yours, claimed or not. Every block change is logged and can be rolled back.</p></div>
+      <div class="rule"><b>3. No cheating</b><p>No hacked clients, x-ray, duping or exploiting bugs. Found a bug? Tell staff with /report.</p></div>
+      <div class="rule"><b>4. No lag machines</b><p>No giant mob farms, item spam or chunk-loading empty land.</p></div>
+      <div class="rule"><b>5. Reactors and explosives</b><p>Only on your own claimed land, away from other people. No nukes.</p></div>
+      <div class="rule"><b>6. PvP</b><p>Allowed in the wilderness. Off in Forge City, and off in towns unless the town turns it on. Wars follow /war rules.</p></div>
+      <div class="rule"><b>7. Fair deals</b><p>Scamming is a crime here. Victims can take you to /court.</p></div>
+      <div class="rule"><b>8. Give others room</b><p>Don't claim or build right up against another town without asking.</p></div>
+      <div class="rule"><b>9. The rail network</b><p>Main lines are two tracks with signals. Don't park carts on main lines or cut someone else's line.</p></div>
+      <div class="rule"><b>10. One account each</b><p>No alts to farm starter coins or swing elections.</p></div>
+      <div class="rule"><b>11. Staff and courts</b><p>Staff and judge decisions stand. Disagree? Use /report or talk to staff privately.</p></div>
+    </div>
+    <p class="penalty">Breaking rules: warning, then mute or jail, then kick, then ban. Serious griefing or cheating can mean an instant ban. Read them in game with <code>/rules</code>.</p>
+    <div style="margin-top:46px">
+      <details><summary>How do I make money fast?</summary><p>Mine and sell to the Exchange early. Prices for scarce goods like uranium start high and drop as players sell. After that, run a shop, take freight jobs, or work for a company.</p></details>
+      <details><summary>Why can't I EMC-condense uranium or nether stars?</summary><p>Those items are mined-only on this server so that mining towns and trade matter. Common items still work with ProjectE as normal.</p></details>
+      <details><summary>Can I lose my town?</summary><p>Only if the town bank can't pay daily upkeep. You lose the newest chunk each day it's unpaid, and the town falls after 3 unpaid days with only the home chunk left. Deposit with /t deposit.</p></details>
+      <details><summary>Is my stuff safe in Forge City?</summary><p>Yes. Spawn is protected and mob-free. Your personal vault at the Vault Bank and anything in your claimed pod or lot can only be touched by you and people you trust.</p></details>
+      <details><summary>How do new items get added to the Exchange?</summary><p>Hold the item and type /exchange request. Trying to /sell something unlisted counts as demand too. Staff list the most-wanted items, and the News Wire announces each new one.</p></details>
+      <details><summary>Something got griefed. What do I do?</summary><p>Don't rebuild it yourself. Type /report with what happened. Staff can see exactly who changed every block and roll it back.</p></details>
+      <details><summary>What happens to my items if the auction doesn't sell?</summary><p>They go to your claim box. Type /ah claim any time to collect them.</p></details>
+    </div>
+  </div>
+</section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <span>YoMikey SMP · <span class="mono">yomikeysmp.modrinth.gg</span> · Tekkit 2 v1.2.6</span>
+    <span>Not affiliated with Mojang, Microsoft or Technic.</span>
+  </div>
+</footer>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script>
+(function () {
+  // ---------- copy ----------
+  var toast = document.getElementById('toast'), tt;
+  function flash(msg) { toast.textContent = msg; toast.classList.add('on'); clearTimeout(tt); tt = setTimeout(function () { toast.classList.remove('on'); }, 1600); }
+  function copy(text) {
+    var done = function () { flash('Copied ' + text); };
+    try {
+      navigator.clipboard.writeText(text).then(done, function () { fallback(text); });
+    } catch (e) { fallback(text); }
+  }
+  function fallback(text) {
+    var ta = document.createElement('textarea'); ta.value = text; ta.setAttribute('readonly', ''); ta.style.position = 'fixed'; ta.style.opacity = '0';
+    document.body.appendChild(ta); ta.select();
+    try { document.execCommand('copy'); flash('Copied ' + text); } catch (e) { flash('Select and copy: ' + text); }
+    document.body.removeChild(ta);
+  }
+  document.addEventListener('click', function (e) {
+    var el = e.target.closest('[data-copy]');
+    if (el) copy(el.getAttribute('data-copy'));
+  });
+
+  // ---------- gallery ----------
+  var views = [
+    ['y-night.webp', 'The Y at night', 'The monument glows inside its hex ring above the lake. The Metro loop runs on the viaduct around it.'],
+    ['core.webp', 'Spawn deck and the core', 'You spawn on the glass deck over the south canyon, looking straight at the Y.'],
+    ['canyon.webp', 'Inside the canyon', 'Terraced ledges, cliff pods, the arched rim bridge and a ladder tower.'],
+    ['west.webp', 'West rim', 'Market Hall under its glass roof, the Exchange and the shop lots.'],
+    ['east.webp', 'East rim', 'Vault Bank, the Portal Hub with the Nether portal, and apartment towers A and B.'],
+    ['north.webp', 'North rim', 'Hall of Nations, the Courthouse, the Penitentiary and Embassy Row.'],
+    ['overview.webp', 'The whole city by day', 'About 200 by 200 blocks, carved into the ground around spawn.'],
+    ['hero.webp', 'The whole city at night', 'Brand colors everywhere: cyan, navy and white.']
+  ];
+  var gimg = document.getElementById('gimg'), gcap = document.getElementById('gcap'), th = document.getElementById('thumbs');
+  function show(i) {
+    gimg.src = 'img/' + views[i][0]; gimg.alt = views[i][1];
+    gcap.innerHTML = '<b>' + views[i][1] + '.</b> ' + views[i][2];
+    th.querySelectorAll('button').forEach(function (b, j) { b.setAttribute('aria-pressed', j === i ? 'true' : 'false'); });
+  }
+  views.forEach(function (v, i) {
+    var b = document.createElement('button'); b.type = 'button'; b.setAttribute('aria-label', v[1]);
+    b.innerHTML = '<img src="img/' + v[0] + '" alt="" loading="lazy">';
+    b.addEventListener('click', function () { show(i); });
+    th.appendChild(b);
+  });
+  show(0);
+
+  // ---------- screens gallery ----------
+  var sv = [
+    ['screen-spawn-1.webp', 'Spawn board: welcome', 'The first thing new players see on the spawn deck.'],
+    ['screen-spawn-2.webp', 'Spawn board: live', 'Who is online, server TPS, and how many towns, nations, companies, stations and shops exist.'],
+    ['screen-exchange-1.webp', 'Exchange: live prices', 'Buy and sell prices, 24-hour change, stock and how much was traded today.'],
+    ['screen-exchange-2.webp', 'Exchange: market movers', 'Biggest gainers and fallers, the most traded items, and what the Exchange is short on.'],
+    ['screen-exchange-3.webp', 'Exchange: spotlight', 'A 24-hour price chart for one item at a time.'],
+    ['screen-news-1.webp', 'News Wire', 'Treaties, elections, new rail lines and new Exchange listings as they happen.'],
+    ['screen-spawn-5.webp', 'Spawn board: getting started', 'The key commands and a rotating tip.']
+  ];
+  var simg = document.getElementById('simg'), scap = document.getElementById('scap'), stabs = document.getElementById('stabs');
+  function sshow(i) {
+    simg.src = 'img/' + sv[i][0]; simg.alt = sv[i][1];
+    scap.innerHTML = '<b>' + sv[i][1] + '.</b> ' + sv[i][2];
+    stabs.querySelectorAll('button').forEach(function (b, j) { b.setAttribute('aria-pressed', j === i ? 'true' : 'false'); });
+  }
+  sv.forEach(function (v, i) {
+    var b = document.createElement('button'); b.type = 'button'; b.textContent = v[1].replace('Spawn board: ', 'Spawn: ').replace('Exchange: ', 'Exchange: ');
+    b.addEventListener('click', function () { sshow(i); });
+    stabs.appendChild(b);
+  });
+  sshow(0);
+
+  // ---------- town chunk grid ----------
+  var g = document.getElementById('grid'), ns = 'http://www.w3.org/2000/svg';
+  var town = { '4,3': 'home', '3,3': 'c', '5,3': 'c', '4,2': 'c', '4,4': 'c', '5,4': 'c', '3,2': 'c', '5,2': 'c', '6,3': 'c' };
+  var other = { '12,1': 1, '13,1': 1, '12,2': 1, '13,2': 1, '13,3': 1 };
+  for (var x = 0; x < 15; x++) for (var y = 0; y < 9; y++) {
+    var r = document.createElementNS(ns, 'rect'), k = x + ',' + y;
+    r.setAttribute('x', 20 + x * 27); r.setAttribute('y', 20 + y * 28); r.setAttribute('width', 24); r.setAttribute('height', 25); r.setAttribute('rx', 3);
+    r.setAttribute('fill', town[k] === 'home' ? '#19e3ff' : town[k] ? '#0f8ea3' : other[k] ? '#7a3b4b' : '#1a2a47');
+    g.appendChild(r);
+  }
+
+  // ---------- commands ----------
+  var C = [
+    ['Economy', '/bal [player]', 'Check a balance'], ['Economy', '/pay <player> <amount> [note]', 'Send Forge Coins'], ['Economy', '/baltop', 'Richest players'],
+    ['Economy', '/exchange', 'Open the trading menu (inside the Exchange)'], ['Economy', '/exchange list', 'Exchange prices (buy / sell / stock)'], ['Economy', '/exchange request', 'Ask for the item you hold to be traded'], ['Economy', '/exchange price [item]', 'Price of an item or the one you hold'],
+    ['Economy', '/sell [amount|all]', 'Sell your held item at the Exchange'], ['Economy', '/buy <item> [amount]', 'Buy from the Exchange'],
+    ['Shops', '/store [item or player]', 'Find player shops'], ['Shops', '/store buying [item]', 'Find [Buy] orders'],
+    ['Shops', '/ah [page]', 'Browse the auction house'], ['Shops', '/ah sell <price> [amount]', 'Buy-now listing (48h)'], ['Shops', '/ah auction <start> [hours]', 'Start a bidding auction'],
+    ['Shops', '/ah buy <#> · /ah bid <#> <amount>', 'Buy or bid'], ['Shops', '/ah mine · /ah cancel <#> · /ah claim', 'Your listings, cancel, collect items'],
+    ['City', '/spawn', 'Back to the spawn deck'], ['City', '/lot claim · unclaim · info · list', 'Rent a shop lot or claim a free room'], ['City', '/lot pay [weeks]', 'Prepay shop lot rent'], ['City', '/lot trust <player>', 'Let a friend build in your lot'],
+    ['Towns', '/t new <name>', 'Found a town (500 FC)'], ['Towns', '/t claim · /t unclaim', 'Claim or release the chunk you stand in'], ['Towns', '/t map · /t here', 'Chunk map and who owns this chunk'],
+    ['Towns', '/t invite <p> · /t join <town> · /t leave', 'Membership'], ['Towns', '/t deposit · /t withdraw · /t bank', 'Town bank'], ['Towns', '/t spawn · /t sethome', 'Town home point'],
+    ['Towns', '/t set tax|open|closed|pvp|board|mayor', 'Town settings'], ['Towns', '/t rank add <p> · /t trust <p>', 'Assistants and trusted outsiders'], ['Towns', '/tc <message>', 'Town chat'],
+    ['Rail', '/station list · links · info <name>', 'The rail network'], ['Rail', '/station route <from> <to>', 'Shortest route between stations'], ['Rail', '/station create <name>', 'Build a station on town land (200 FC)'],
+    ['Rail', '/station collect', 'Pick up deliveries at this station'], ['Rail', '/freight list [station]', 'Open freight jobs'], ['Rail', '/freight supply <station> <amount> <reward>', 'Pay someone to bring items'],
+    ['Rail', '/freight haul <to> <reward> <collateral>', 'Pay someone to move your cargo'], ['Rail', '/freight accept <#> · /freight deliver <#>', 'Take and finish a job'],
+    ['Companies', '/co new <name>', 'Found a company (250 FC)'], ['Companies', '/co invite · join · leave · kick', 'Staff'], ['Companies', '/co pay <player> <amount>', 'Pay from the company bank'],
+    ['Companies', '/co shares · /co shares give <p> <n>', 'Cap table and share transfers'], ['Companies', '/co dividend <amount>', 'Pay all shareholders'],
+    ['Nations', '/n new <name>', 'Found a nation (mayors, 1000 FC)'], ['Nations', '/n invite <town> · /n join <nation>', 'Grow the nation'], ['Nations', '/n set gov|tax|capital', 'Government, tax and capital'],
+    ['Nations', '/n laws · /n law propose <text>', 'Read and propose laws'], ['Nations', '/n law vote <#> yes|no', 'Vote on a law (democracy)'], ['Nations', '/n election · /n run · /n vote <p>', 'Elections'],
+    ['Nations', '/n constitution [set <text>]', 'Founding document'],
+    ['Diplomacy', '/treaty draft <nation> <type> <terms>', 'Propose a treaty'], ['Diplomacy', '/treaty sign <#> · reject · cancel', 'Answer or end a treaty'], ['Diplomacy', '/treaty list · view <#>', 'The treaty registry'],
+    ['Diplomacy', '/war rules · status', 'How war works and who is fighting'], ['Diplomacy', '/war declare <nation> <reason>', 'Declare war'], ['Diplomacy', '/war surrender [reparations]', 'End a war'],
+    ['Diplomacy', '/diplo [nation]', 'Foreign relations'], ['Diplomacy', '/diplo tariff <nation> <percent>', 'Tariff on foreign shoppers'], ['Diplomacy', '/diplo sanction <nation>', 'Block trade'],
+    ['Diplomacy', '/council · propose · vote', 'Grand Council'], ['Diplomacy', '/news', 'The news wire'],
+    ['Justice', '/court file <player> <charge>', 'Open a case (25 FC)'], ['Justice', '/court statement <#> <text>', 'Add testimony'], ['Justice', '/court cases · view <#>', 'The docket'],
+    ['Justice', '/court record <player>', 'Criminal record'], ['Justice', '/jail status', 'Time left if you are jailed'],
+    ['Justice', '/court take · hearing · verdict', 'Judges only'],
+    ['Help', '/rules', 'The server rules'], ['Help', '/guide [topic]', 'Guides: start, money, shops, towns, rail, jobs...'], ['Help', '/handbook', 'A fresh copy of the handbook'], ['Help', '/report <player> <what happened>', 'Tell staff about a problem'], ['Help', '/guide tips off', 'Turn off chat tips']
+  ];
+  var groups = ['All'].concat(C.map(function (c) { return c[0]; }).filter(function (v, i, a) { return a.indexOf(v) === i; }));
+  var active = 'All', q = document.getElementById('q'), tabs = document.getElementById('tabs'), out = document.getElementById('cmds');
+  try { var saved = localStorage.getItem('yms-tab'); if (saved && groups.indexOf(saved) >= 0) active = saved; } catch (e) {}
+  groups.forEach(function (gname) {
+    var b = document.createElement('button'); b.type = 'button'; b.textContent = gname;
+    b.addEventListener('click', function () { active = gname; try { localStorage.setItem('yms-tab', gname); } catch (e) {} render(); });
+    tabs.appendChild(b);
+  });
+  function esc(s) { return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
+  function render() {
+    tabs.querySelectorAll('button').forEach(function (b) { b.setAttribute('aria-pressed', b.textContent === active ? 'true' : 'false'); });
+    var term = q.value.trim().toLowerCase();
+    var rows = C.filter(function (c) { return (active === 'All' || c[0] === active) && (!term || (c[1] + ' ' + c[2] + ' ' + c[0]).toLowerCase().indexOf(term) >= 0); });
+    out.innerHTML = rows.length ? rows.map(function (c) {
+      var first = c[1].split(' · ')[0].replace(/\s*[<\[].*$/, '');
+      return '<div class="cmdrow"><code class="chip" style="background:none;border:0;padding:0" data-copy="' + esc(first) + '" title="Copy ' + esc(first) + '">' + esc(c[1]) + '</code><span class="d">' + esc(c[2]) + '</span><span class="g">' + c[0] + '</span></div>';
+    }).join('') : '<div class="empty">No commands match "' + esc(term) + '".</div>';
+  }
+  q.addEventListener('input', render);
+  render();
+})();
+</script>
+
+</body></html>
