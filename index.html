@@ -25,6 +25,33 @@
 .staff .yes { color: var(--green); } .staff .no { color: #5c6f8c; }
 .tbl-wrap { overflow-x: auto; }
 .penalty { margin-top: 18px; color: var(--muted); font-size: 15px; border-left: 2px solid var(--red); padding-left: 14px; }
+.status { margin-top: 18px; display: inline-flex; align-items: center; gap: 10px; background: var(--panel); border: 1px solid var(--line); border-radius: 999px; padding: 7px 14px; font-size: 14px; color: var(--muted); max-width: 100%; }
+.status .dot { width: 9px; height: 9px; border-radius: 50%; background: #5c6f8c; flex-shrink: 0; }
+.status.on .dot { background: var(--green); box-shadow: 0 0 0 4px rgba(94,230,163,.18); }
+.status.off .dot { background: var(--red); }
+.status b { color: var(--white); font-weight: 600; }
+.status .who { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.jobs { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; }
+@media (max-width: 900px) { .jobs { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 520px) { .jobs { grid-template-columns: 1fr; } }
+.job { background: var(--panel); border: 1px solid var(--line); border-radius: 12px; padding: 18px; display: grid; gap: 6px; align-content: start; }
+.job .ic { width: 34px; height: 34px; border-radius: 9px; background: var(--deep); border: 1px solid var(--line); display: grid; place-items: center; }
+.job .ic svg { width: 20px; height: 20px; stroke: var(--cyan); fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+.job h3 { font-size: 17px; }
+.job p { color: #b6c6dc; font-size: 14px; }
+.job code { color: var(--cyan); }
+.applybox { background: linear-gradient(135deg, #0f2440, #101d34); border: 1px solid #1f6b80; border-radius: 16px; padding: 26px; display: grid; gap: 14px; }
+.applybox ol { margin: 0; padding-left: 20px; color: #c5d4e8; display: grid; gap: 10px; }
+.applybox .big { font-family: var(--f-mono); font-size: 22px; color: var(--cyan); background: var(--deep); border: 1px solid var(--line); border-radius: 10px; padding: 8px 16px; display: inline-block; cursor: pointer; margin-top: 6px; }
+.qs { margin: 10px 0 0; padding-left: 20px; color: #b6c6dc; font-size: 15px; display: grid; gap: 6px; }
+.req { display: flex; flex-wrap: wrap; gap: 8px; }
+.req span { background: var(--deep); border: 1px solid var(--line); border-radius: 999px; padding: 5px 12px; font-size: 13px; color: #c5d4e8; }
+.log { border-left: 2px solid var(--line); margin-left: 6px; }
+.log div { position: relative; padding: 0 0 24px 22px; }
+.log div::before { content: ""; position: absolute; left: -7px; top: 6px; width: 12px; height: 12px; border-radius: 50%; background: var(--cyan); }
+.log b { color: var(--white); font-family: var(--f-display); font-size: 17px; display: block; }
+.log p { color: #b6c6dc; font-size: 15px; margin-top: 4px; }
+.log .when { color: var(--muted); font-size: 13px; font-family: var(--f-mono); }
 </style></head><body>
 <title>YoMikey SMP</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -215,8 +242,8 @@ footer .wrap { display: flex; flex-wrap: wrap; justify-content: space-between; g
     <a class="brand" href="#top"><img src="img/logo.png" alt="">YoMikey SMP</a>
     <nav class="nav" aria-label="Sections">
       <a href="#join">Join</a><a href="#city">Forge City</a><a href="#screens">Screens</a><a href="#economy">Economy</a><a href="#towns">Towns</a>
-      <a href="#rail">Rail</a><a href="#nations">Nations</a>
-      <a href="#justice">Justice</a><a href="#fairplay">Fair play</a><a href="#commands">Commands</a><a href="#rules">Rules</a>
+      <a href="#nations">Nations</a>
+      <a href="#fairplay">Fair play</a><a href="#staff">Staff</a><a href="#commands">Commands</a><a href="#rules">Rules</a>
     </nav>
     <button class="ipchip" type="button" data-copy="yomikeysmp.modrinth.gg" aria-label="Copy server address"><span class="dot"></span><span class="t">yomikeysmp.modrinth.gg</span><span aria-hidden="true">⧉</span></button>
   </div>
@@ -235,6 +262,7 @@ footer .wrap { display: flex; flex-wrap: wrap; justify-content: space-between; g
       <div class="facts">
         <span><b>Tekkit 2</b> v1.2.6</span><span><b>Minecraft</b> 1.12.2</span><span><b>16</b> player slots</span><span><b>100 FC</b> starter grant</span><span><b>Live</b> ComputerCraft screens</span><span><b>4,000 × 4,000</b> pre-generated world</span>
       </div>
+      <div class="status" id="status" aria-live="polite"><span class="dot"></span><span class="who">Checking server status…</span></div>
     </div>
     <div class="hero-art"><img src="img/hero.webp" alt="Forge City at night: a canyon city with a giant glowing Y monument inside a hexagon ring" width="1800" height="1024"></div>
   </div>
@@ -260,6 +288,27 @@ footer .wrap { display: flex; flex-wrap: wrap; justify-content: space-between; g
       <div><b>Sell your first haul</b>Bring ore to the Exchange and type <code>/exchange</code> to open the trading menu.</div>
       <div><b>Head out</b>Travel 160+ blocks from spawn and found a town with <code>/t new</code>.</div>
       <div><b>Read the handbook</b>New players get one in their inventory. In chat, <code>/guide start</code> walks you through your first hour.</div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= WAYS TO PLAY ================= -->
+<section id="play">
+  <div class="wrap">
+    <div class="head">
+      <div class="eyebrow">Find your thing</div>
+      <h2>Ways to play</h2>
+      <p class="lede">There's no single path. Every role earns Forge Coins and matters to everyone else.</p>
+    </div>
+    <div class="jobs">
+      <div class="job"><div class="ic"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14 4l6 6M4 20l9-9M12 6c3-3 7-2 8 0-2 1-3 4-6 6"/></svg></div><h3>Miner</h3><p>Dig up uranium, iridium and the other mined-only materials and sell them at the Exchange for real money.</p></div>
+      <div class="job"><div class="ic"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9h16l-1-4H5zM5 9v10h14V9M10 19v-5h4v5"/></svg></div><h3>Shopkeeper</h3><p>Rent a lot in Forge City, stock chest shops, and earn while you're offline. Buyers find you with <code>/store</code>.</p></div>
+      <div class="job"><div class="ic"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 16h18M6 16V8h9l3 4v4M8 19a2 2 0 100-4 2 2 0 000 4zM16 19a2 2 0 100-4 2 2 0 000 4z"/></svg></div><h3>Hauler</h3><p>Take freight jobs between stations, deliver on time and get paid. <code>/freight list</code></p></div>
+      <div class="job"><div class="ic"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 8a4 4 0 100 8 4 4 0 000-8zM12 2v3M12 19v3M2 12h3M19 12h3M5 5l2 2M17 17l2 2M5 19l2-2M17 7l2-2"/></svg></div><h3>Engineer</h3><p>Build reactors, power grids, ME systems and factories, for yourself or for hire.</p></div>
+      <div class="job"><div class="ic"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 3L5 21M17 3l2 18M6 8h12M5.5 14h13"/></svg></div><h3>Rail builder</h3><p>Lay the lines that connect towns. Nations and companies pay for good rail.</p></div>
+      <div class="job"><div class="ic"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 17l6-6 4 4 8-8M15 7h6v6"/></svg></div><h3>Trader</h3><p>Watch the Exchange board, buy what's cheap, sell what's short, and flip auctions.</p></div>
+      <div class="job"><div class="ic"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 21V8l8-5 8 5v13M9 21v-6h6v6"/></svg></div><h3>Founder</h3><p>Start a company, sell shares, hire players and pay dividends. <code>/co new</code></p></div>
+      <div class="job"><div class="ic"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 21h18M5 21V10M19 21V10M9 21V10M15 21V10M2 10l10-6 10 6z"/></svg></div><h3>Leader</h3><p>Run a town, lead a nation, sit as a judge or negotiate treaties as a diplomat.</p></div>
     </div>
   </div>
 </section>
@@ -618,6 +667,58 @@ footer .wrap { display: flex; flex-wrap: wrap; justify-content: space-between; g
   </div>
 </section>
 
+<!-- ================= STAFF ================= -->
+<section id="staff">
+  <div class="wrap">
+    <div class="split">
+      <div class="prose">
+        <div class="eyebrow">Join the team</div>
+        <h2>Help run YoMikey SMP</h2>
+        <p>Staff keep the server fun and fair. They welcome new players, answer questions, handle reports, roll back grief and keep chat friendly between rival nations. It's a volunteer role for people who already enjoy playing here.</p>
+        <p><strong>What you get:</strong> the <span style="color:#5aa0ff">[Mod]</span> tag, staff chat, and the mod tools in the table above: reports, freezing suspected cheaters, teleporting to problems, grief rollback and short bans. Great mods can be promoted to Admin.</p>
+        <div class="req"><span>2+ hours played on the server</span><span>A clean record</span><span>Friendly and patient</span><span>Online a few times a week</span></div>
+        <p style="font-size:15px;color:var(--muted)">Applications happen in game, so only staff ever see your answers.</p>
+      </div>
+      <div class="applybox">
+        <div class="eyebrow">How to apply</div>
+        <ol>
+          <li>Join the server and play for at least 2 hours.</li>
+          <li>Type this in chat:<br><span class="big" data-copy="/apply" title="Copy /apply">/apply</span></li>
+          <li>Answer 6 short questions right in chat. Your answers go only to staff, never to public chat.</li>
+          <li>An admin reviews it, and you'll get a message in game either way, even if you were offline when they decided.</li>
+        </ol>
+        <details style="border:0"><summary style="font-size:15px">See the questions</summary>
+          <ol class="qs">
+            <li>What time zone are you in, and when are you usually online?</li>
+            <li>Have you been staff on a server before?</li>
+            <li>A player says their house was griefed. What do you do, step by step?</li>
+            <li>Two nations are arguing in public chat and it's getting heated. What do you do?</li>
+            <li>Why do you want to help run YoMikey SMP?</li>
+            <li>How can we reach you outside the game?</li>
+          </ol>
+        </details>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= UPDATES ================= -->
+<section id="updates">
+  <div class="wrap">
+    <div class="head">
+      <div class="eyebrow">Always improving</div>
+      <h2>What's new</h2>
+    </div>
+    <div class="log">
+      <div><span class="when">October 2026</span><b>Staff applications</b><p>Apply in game with /apply: six questions, private answers, reviewed by admins.</p></div>
+      <div><span class="when">October 2026</span><b>The Exchange menu and price history</b><p>Trade everything from one menu. The Exchange screen shows stock, 24-hour changes, market movers and price charts, and players can request new items.</p></div>
+      <div><span class="when">October 2026</span><b>ComputerCraft screens</b><p>Live screens at spawn, the Exchange, the news tower, the Courthouse, the Market Hall and more.</p></div>
+      <div><span class="when">October 2026</span><b>Fair play tools</b><p>Grief logging and rollback, staff ranks, reports, rules, guides and a handbook for new players.</p></div>
+      <div><span class="when">October 2026</span><b>Forge City opens</b><p>The canyon city, the economy, towns, rail, companies, nations, diplomacy and courts.</p></div>
+    </div>
+  </div>
+</section>
+
 <!-- ================= COMMANDS ================= -->
 <section id="commands">
   <div class="wrap">
@@ -654,6 +755,8 @@ footer .wrap { display: flex; flex-wrap: wrap; justify-content: space-between; g
     </div>
     <p class="penalty">Breaking rules: warning, then mute or jail, then kick, then ban. Serious griefing or cheating can mean an instant ban. Read them in game with <code>/rules</code>.</p>
     <div style="margin-top:46px">
+      <details><summary>Is it free? Do I need to install anything extra?</summary><p>It's free. You only need the Tekkit 2 modpack (v1.2.6) from the Technic Launcher. Everything else, from the economy to the screens, runs on the server.</p></details>
+      <details><summary>How do I become staff?</summary><p>Play for at least 2 hours, then type /apply in game and answer six short questions. An admin reviews every application and you'll get a message either way.</p></details>
       <details><summary>How do I make money fast?</summary><p>Mine and sell to the Exchange early. Prices for scarce goods like uranium start high and drop as players sell. After that, run a shop, take freight jobs, or work for a company.</p></details>
       <details><summary>Why can't I EMC-condense uranium or nether stars?</summary><p>Those items are mined-only on this server so that mining towns and trade matter. Common items still work with ProjectE as normal.</p></details>
       <details><summary>Can I lose my town?</summary><p>Only if the town bank can't pay daily upkeep. You lose the newest chunk each day it's unpaid, and the town falls after 3 unpaid days with only the home chunk left. Deposit with /t deposit.</p></details>
@@ -727,6 +830,21 @@ footer .wrap { display: flex; flex-wrap: wrap; justify-content: space-between; g
   });
   show(0);
 
+  // ---------- live server status (public status API; fails quietly) ----------
+  (function () {
+    var box = document.getElementById('status'); if (!box || !window.fetch) return;
+    var who = box.querySelector('.who');
+    function clean(x) { return String(x).replace(/[<>&"]/g, ''); }
+    fetch('https://api.mcsrvstat.us/3/yomikeysmp.modrinth.gg').then(function (r) { return r.json(); }).then(function (d) {
+      if (d && d.online) {
+        var n = d.players ? d.players.online : 0, m = d.players ? d.players.max : 16;
+        var names = d.players && d.players.list ? d.players.list.map(function (p) { return p && p.name ? p.name : p; }).slice(0, 6) : [];
+        box.classList.add('on');
+        who.innerHTML = '<b>Online now</b> · ' + n + ' / ' + m + ' playing' + (names.length ? ': ' + names.map(clean).join(', ') : '');
+      } else { box.classList.add('off'); who.innerHTML = '<b>Offline</b> right now · check back soon'; }
+    }).catch(function () { who.textContent = 'Server status unavailable right now'; });
+  })();
+
   // ---------- screens gallery ----------
   var sv = [
     ['ig-spawn-board.webp', 'In game: the spawn board', 'A screenshot from the live server. The board is the first thing you see when you spawn.'],
@@ -791,7 +909,7 @@ footer .wrap { display: flex; flex-wrap: wrap; justify-content: space-between; g
     ['Justice', '/court file <player> <charge>', 'Open a case (25 FC)'], ['Justice', '/court statement <#> <text>', 'Add testimony'], ['Justice', '/court cases · view <#>', 'The docket'],
     ['Justice', '/court record <player>', 'Criminal record'], ['Justice', '/jail status', 'Time left if you are jailed'],
     ['Justice', '/court take · hearing · verdict', 'Judges only'],
-    ['Help', '/rules', 'The server rules'], ['Help', '/guide [topic]', 'Guides: start, money, shops, towns, rail, jobs...'], ['Help', '/handbook', 'A fresh copy of the handbook'], ['Help', '/report <player> <what happened>', 'Tell staff about a problem'], ['Help', '/guide tips off', 'Turn off chat tips']
+    ['Help', '/rules', 'The server rules'], ['Help', '/guide [topic]', 'Guides: start, money, shops, towns, rail, jobs...'], ['Help', '/handbook', 'A fresh copy of the handbook'], ['Help', '/report <player> <what happened>', 'Tell staff about a problem'], ['Help', '/apply', 'Apply to join the staff team'], ['Help', '/guide tips off', 'Turn off chat tips']
   ];
   var groups = ['All'].concat(C.map(function (c) { return c[0]; }).filter(function (v, i, a) { return a.indexOf(v) === i; }));
   var active = 'All', q = document.getElementById('q'), tabs = document.getElementById('tabs'), out = document.getElementById('cmds');
