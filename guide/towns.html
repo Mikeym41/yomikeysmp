@@ -131,6 +131,24 @@ body footer .wrap { display: grid; gap: 26px; justify-content: normal; }
 .votes a:hover { border-color: var(--cyan); }
 .trailer { position: relative; aspect-ratio: 16 / 9; border-radius: 14px; overflow: hidden; border: 1px solid var(--line); background: #000; }
 .trailer iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; }
+.dchip { flex-shrink: 0; display: inline-flex; align-items: center; gap: 7px; background: #5865f2; color: #fff; font-family: var(--f-display); font-weight: 600; font-size: 13px; padding: 7px 12px; border-radius: 8px; text-decoration: none; }
+.dchip:hover { background: #4752c4; }
+@media (max-width: 560px) { .dchip .t { display: none; } }
+.btn-discord { background: #5865f2; color: #fff; }
+.btn-discord:hover { background: #4752c4; }
+.dcount { display: flex; gap: 18px; flex-wrap: wrap; font-size: 14px; color: #e3e6ff; }
+.dcount b { font-family: var(--f-display); font-size: 20px; color: #fff; margin-right: 5px; }
+.dcount .on::before { content: ""; display: inline-block; width: 8px; height: 8px; border-radius: 50%; background: #3ba55d; margin-right: 7px; vertical-align: 2px; }
+.dlist { margin: 0; padding: 0; list-style: none; display: grid; gap: 9px; }
+.dlist li { display: grid; grid-template-columns: 150px 1fr; gap: 10px; font-size: 14px; color: #c5d4e8; }
+.dlist li code { justify-self: start; }
+@media (max-width: 520px) { .dlist li { grid-template-columns: 1fr; gap: 2px; } }
+@media (max-width: 1420px) { .nav a[href="#screens"], .nav a[href="#commands"], .nav a[href$="#screens"], .nav a[href$="#commands"] { display: none; } }
+@media (max-width: 1180px) { .nav a[href="#economy"], .nav a[href$="#economy"] { display: none; } }
+section#community .discord { display: flex; flex-direction: column; gap: 14px; }
+section#community .discord .btn { margin-top: auto; align-self: flex-start; }
+.dinv { font-family: var(--f-mono); font-size: 13px; color: #c9cdfb; }
+.joinbar .dmini { background: #5865f2; color: #fff; padding: 9px 12px; border-radius: 10px; text-decoration: none; display: inline-flex; align-items: center; }
 </style></head><body>
 <title>Towns · YoMikey SMP guide</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -350,6 +368,7 @@ footer .wrap { display: flex; flex-wrap: wrap; justify-content: space-between; g
       
       <a href="../index.html#staff">Staff</a><a href="../index.html#commands">Commands</a><a href="../index.html#rules">Rules</a>
     </nav>
+    <a class="dchip" href="https://discord.gg/xxARpAuw9M" target="_blank" rel="noopener" aria-label="Join the Discord"><svg viewBox="0 0 24 24" aria-hidden="true" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a8 8 0 01-11.6 7.1L4 20l1-4.6A8 8 0 1121 12z"/><path d="M8.5 12h.01M12 12h.01M15.5 12h.01"/></svg><span class="t">Discord</span></a>
     <button class="ipchip" type="button" data-copy="yomikeysmp.modrinth.gg" aria-label="Copy server address"><span class="dot"></span><span class="t">yomikeysmp.modrinth.gg</span><span aria-hidden="true">⧉</span></button>
   </div>
 </header>
@@ -379,7 +398,7 @@ footer .wrap { display: flex; flex-wrap: wrap; justify-content: space-between; g
         <button class="btn btn-primary" type="button" data-copy="yomikeysmp.modrinth.gg" style="margin-top:14px;font-size:14px;padding:10px 14px">Copy IP <span class="ip" style="font-size:13px">yomikeysmp.modrinth.gg</span></button>
       </div>
       <div><b>Play</b><a href="../index.html#join">How to join</a><a href="../index.html#play">Ways to play</a><a href="../index.html#city">Forge City</a><a href="../index.html#economy">Economy</a><a href="../index.html#commands">Commands</a></div>
-      <div><b>Community</b><a href="../index.html#rules">Rules</a><a href="../index.html#fairplay">Fair play</a><a href="../index.html#staff">Join the staff</a><a href="../index.html#updates">What's new</a><a href="../index.html#top">Back to top</a></div>
+      <div><b>Community</b><a href="https://discord.gg/xxARpAuw9M" target="_blank" rel="noopener">Discord</a><a href="../index.html#rules">Rules</a><a href="../index.html#fairplay">Fair play</a><a href="../index.html#staff">Join the staff</a><a href="../index.html#updates">What's new</a><a href="../index.html#top">Back to top</a></div>
     </div>
     <div class="fine"><span>Tekkit 2 v1.2.6 · Minecraft 1.12.2</span><span>Not affiliated with Mojang, Microsoft or Technic.</span></div>
   </div>

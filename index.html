@@ -131,6 +131,24 @@ body footer .wrap { display: grid; gap: 26px; justify-content: normal; }
 .votes a:hover { border-color: var(--cyan); }
 .trailer { position: relative; aspect-ratio: 16 / 9; border-radius: 14px; overflow: hidden; border: 1px solid var(--line); background: #000; }
 .trailer iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; }
+.dchip { flex-shrink: 0; display: inline-flex; align-items: center; gap: 7px; background: #5865f2; color: #fff; font-family: var(--f-display); font-weight: 600; font-size: 13px; padding: 7px 12px; border-radius: 8px; text-decoration: none; }
+.dchip:hover { background: #4752c4; }
+@media (max-width: 560px) { .dchip .t { display: none; } }
+.btn-discord { background: #5865f2; color: #fff; }
+.btn-discord:hover { background: #4752c4; }
+.dcount { display: flex; gap: 18px; flex-wrap: wrap; font-size: 14px; color: #e3e6ff; }
+.dcount b { font-family: var(--f-display); font-size: 20px; color: #fff; margin-right: 5px; }
+.dcount .on::before { content: ""; display: inline-block; width: 8px; height: 8px; border-radius: 50%; background: #3ba55d; margin-right: 7px; vertical-align: 2px; }
+.dlist { margin: 0; padding: 0; list-style: none; display: grid; gap: 9px; }
+.dlist li { display: grid; grid-template-columns: 150px 1fr; gap: 10px; font-size: 14px; color: #c5d4e8; }
+.dlist li code { justify-self: start; }
+@media (max-width: 520px) { .dlist li { grid-template-columns: 1fr; gap: 2px; } }
+@media (max-width: 1420px) { .nav a[href="#screens"], .nav a[href="#commands"], .nav a[href$="#screens"], .nav a[href$="#commands"] { display: none; } }
+@media (max-width: 1180px) { .nav a[href="#economy"], .nav a[href$="#economy"] { display: none; } }
+section#community .discord { display: flex; flex-direction: column; gap: 14px; }
+section#community .discord .btn { margin-top: auto; align-self: flex-start; }
+.dinv { font-family: var(--f-mono); font-size: 13px; color: #c9cdfb; }
+.joinbar .dmini { background: #5865f2; color: #fff; padding: 9px 12px; border-radius: 10px; text-decoration: none; display: inline-flex; align-items: center; }
 </style></head><body>
 <title>YoMikey SMP</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -324,6 +342,7 @@ footer .wrap { display: flex; flex-wrap: wrap; justify-content: space-between; g
       
       <a href="#staff">Staff</a><a href="#commands">Commands</a><a href="#rules">Rules</a>
     </nav>
+    <a class="dchip" href="https://discord.gg/xxARpAuw9M" target="_blank" rel="noopener" aria-label="Join the Discord"><svg viewBox="0 0 24 24" aria-hidden="true" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a8 8 0 01-11.6 7.1L4 20l1-4.6A8 8 0 1121 12z"/><path d="M8.5 12h.01M12 12h.01M15.5 12h.01"/></svg><span class="t">Discord</span></a>
     <button class="ipchip" type="button" data-copy="yomikeysmp.modrinth.gg" aria-label="Copy server address"><span class="dot"></span><span class="t">yomikeysmp.modrinth.gg</span><span aria-hidden="true">⧉</span></button>
   </div>
 </header>
@@ -337,6 +356,7 @@ footer .wrap { display: flex; flex-wrap: wrap; justify-content: space-between; g
       <div class="cta">
         <button class="btn btn-primary" type="button" data-copy="yomikeysmp.modrinth.gg">Copy IP <span class="ip">yomikeysmp.modrinth.gg</span></button>
         <a class="btn btn-ghost" href="#join">How to join</a>
+        <a class="btn btn-discord" href="https://discord.gg/xxARpAuw9M" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" aria-hidden="true" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a8 8 0 01-11.6 7.1L4 20l1-4.6A8 8 0 1121 12z"/><path d="M8.5 12h.01M12 12h.01M15.5 12h.01"/></svg>Join the Discord</a>
       </div>
       <div class="facts">
         <span><b>Tekkit 2</b> v1.2.6</span><span><b>Minecraft</b> 1.12.2</span><span><b>16</b> player slots</span><span><b>100 FC</b> starter grant</span><span><b>Live</b> ComputerCraft screens</span><span><b>4,000 × 4,000</b> pre-generated world</span>
@@ -366,6 +386,7 @@ footer .wrap { display: flex; flex-wrap: wrap; justify-content: space-between; g
       <div><b>Grab a free room</b>Stand in an empty cliff pod or tower room and type <code>/lot claim</code>.</div>
       <div><b>Sell your first haul</b>Bring ore to the Exchange and type <code>/exchange</code> to open the trading menu.</div>
       <div><b>Head out</b>Travel 160+ blocks from spawn and found a town with <code>/t new</code>.</div>
+      <div><b>Link your Discord</b>Type <code>/discord link</code> and post the code in #link-your-account. You get the Citizen role and can talk to the game from Discord.</div>
       <div><b>Read the handbook</b>New players get one in their inventory. In chat, <code>/guide start</code> walks you through your first hour.</div>
     </div>
   </div>
@@ -415,13 +436,14 @@ footer .wrap { display: flex; flex-wrap: wrap; justify-content: space-between; g
   </div>
 </section>
 
-<!-- ================= COMMUNITY (shown once links are set on the server) ================= -->
-<section id="community" hidden>
+<!-- ================= COMMUNITY ================= -->
+<section id="community">
   <div class="wrap">
-    <div class="head"><div class="eyebrow">Community</div><h2>Join the community</h2></div>
+    <div class="head"><div class="eyebrow">Community</div><h2>The server doesn't stop when you log off</h2><p class="lede">The Discord is wired into the game. Chat with whoever's online from your phone, watch the News Wire, and get the Exchange close every evening.</p></div>
     <div id="trailerbox" class="trailer" hidden style="margin-bottom:22px"></div>
     <div class="community">
-      <div class="discord" id="discordbox" hidden><h3>Join our Discord</h3><p>Chat with players, plan your nation, trade, and hear about events first.</p><a class="btn" id="discordlink" href="#" target="_blank" rel="noopener">Open Discord</a></div>
+      <div class="discord" id="discordbox"><h3>YoMikey SMP on Discord</h3><p>Type in #server-chat and it shows up in game. Link your account with <code style="background:rgba(255,255,255,.15);color:#fff">/discord link</code> and your town and nation titles follow you there.</p><div class="dcount" id="dcount" hidden><span><b id="dmembers">0</b>members</span><span class="on"><b id="donline">0</b>online now</span></div><div class="dinv">discord.gg/xxARpAuw9M</div><a class="btn" id="discordlink" href="https://discord.gg/xxARpAuw9M" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" aria-hidden="true" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a8 8 0 01-11.6 7.1L4 20l1-4.6A8 8 0 1121 12z"/><path d="M8.5 12h.01M12 12h.01M15.5 12h.01"/></svg>Join the Discord</a></div>
+      <div class="lcard"><h3>What's in there</h3><ul class="dlist"><li><code>#server-chat</code><span>Game chat, both ways. <code>!online</code>, <code>!price wheat</code>, <code>!town Ironhold</code> all work.</span></li><li><code>#news-wire</code><span>New towns, treaties, wars and elections, straight from the game.</span></li><li><code>#exchange-board</code><span>The day's market close: what moved, what sold out.</span></li><li><code>#help-desk</code><span>Crashes, claims, the economy. Tag it and someone answers.</span></li><li><code>#court-records</code><span>Every case filed in game, on the public record.</span></li><li><code>#contact-staff</code><span>Private threads for reports and appeals.</span></li></ul></div>
       <div class="lcard" id="votebox" hidden><h3>Vote for us every day</h3><p style="color:#b6c6dc;font-size:14px">Each vote pushes YoMikey SMP up the server lists so new players can find us. In game, <code>/vote</code> shows the same links.</p><div class="votes" id="votes"></div></div>
     </div>
   </div>
@@ -897,13 +919,13 @@ footer .wrap { display: flex; flex-wrap: wrap; justify-content: space-between; g
         <button class="btn btn-primary" type="button" data-copy="yomikeysmp.modrinth.gg" style="margin-top:14px;font-size:14px;padding:10px 14px">Copy IP <span class="ip" style="font-size:13px">yomikeysmp.modrinth.gg</span></button>
       </div>
       <div><b>Play</b><a href="#join">How to join</a><a href="#play">Ways to play</a><a href="#city">Forge City</a><a href="#economy">Economy</a><a href="#commands">Commands</a></div>
-      <div><b>Community</b><a href="#rules">Rules</a><a href="#fairplay">Fair play</a><a href="#staff">Join the staff</a><a href="#updates">What's new</a><a href="#top">Back to top</a></div>
+      <div><b>Community</b><a href="https://discord.gg/xxARpAuw9M" target="_blank" rel="noopener">Discord</a><a href="#rules">Rules</a><a href="#fairplay">Fair play</a><a href="#staff">Join the staff</a><a href="#updates">What's new</a><a href="#top">Back to top</a></div>
     </div>
     <div class="fine"><span>Tekkit 2 v1.2.6 · Minecraft 1.12.2</span><span>Not affiliated with Mojang, Microsoft or Technic.</span></div>
   </div>
 </footer>
 <a class="totop" id="totop" href="#top" aria-label="Back to top">↑</a>
-<div class="joinbar" id="joinbar"><span>yomikeysmp.modrinth.gg</span><button class="btn btn-primary" type="button" data-copy="yomikeysmp.modrinth.gg">Copy IP</button></div>
+<div class="joinbar" id="joinbar"><span>yomikeysmp.modrinth.gg</span><a class="dmini" href="https://discord.gg/xxARpAuw9M" target="_blank" rel="noopener" aria-label="Discord"><svg viewBox="0 0 24 24" aria-hidden="true" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a8 8 0 01-11.6 7.1L4 20l1-4.6A8 8 0 1121 12z"/><path d="M8.5 12h.01M12 12h.01M15.5 12h.01"/></svg></a><button class="btn btn-primary" type="button" data-copy="yomikeysmp.modrinth.gg">Copy IP</button></div>
 <div class="lb" id="lb" role="dialog" aria-modal="true" aria-label="Screenshot viewer">
   <figure><img id="lbimg" alt=""><figcaption id="lbcap"></figcaption></figure>
   <button class="x" type="button" aria-label="Close">✕</button><button class="p" type="button" aria-label="Previous">‹</button><button class="n" type="button" aria-label="Next">›</button>
@@ -1033,11 +1055,19 @@ footer .wrap { display: flex; flex-wrap: wrap; justify-content: space-between; g
       .map(function (x) { return '<div><b>' + (x[1] == null ? 0 : x[1]) + '</b>' + x[0] + '</div>'; }).join('');
     // community links
     var L = d.links || {}, any = false;
-    if (L.discord) { any = true; document.getElementById('discordbox').hidden = false; document.getElementById('discordlink').href = L.discord; }
+    if (L.discord) { document.getElementById('discordlink').href = L.discord; }
     if (L.vote && L.vote.length) { any = true; document.getElementById('votebox').hidden = false; document.getElementById('votes').innerHTML = L.vote.map(function (v) { return '<a href="' + E(v.url) + '" target="_blank" rel="noopener">' + E(v.name) + '<span aria-hidden="true">↗</span></a>'; }).join(''); }
     if (L.trailer && /^[\w-]{6,20}$/.test(L.trailer)) { any = true; var tb = document.getElementById('trailerbox'); tb.hidden = false; tb.innerHTML = '<iframe src="https://www.youtube-nocookie.com/embed/' + L.trailer + '" title="YoMikey SMP trailer" allow="accelerometer; encrypted-media; picture-in-picture" allowfullscreen loading="lazy"></iframe>'; }
     if (any) document.getElementById('community').hidden = false;
   });
+
+  // ---------- Discord member counts ----------
+  if (window.fetch) fetch('https://discord.com/api/v10/invites/xxARpAuw9M?with_counts=true').then(function (r) { return r.ok ? r.json() : null; }).then(function (j) {
+    if (!j || !j.approximate_member_count) return;
+    document.getElementById('dmembers').textContent = j.approximate_member_count.toLocaleString();
+    document.getElementById('donline').textContent = (j.approximate_presence_count || 0).toLocaleString();
+    document.getElementById('dcount').hidden = false;
+  }).catch(function () {});
 
   // ---------- live server status (public status API; fails quietly) ----------
   (function () {
